@@ -1,0 +1,19 @@
+# Python (scripts de las skills)
+__pycache__/
+*.py[cod]
+
+# Auxiliares de LaTeX / Biber
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.xdv

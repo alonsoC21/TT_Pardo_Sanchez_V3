@@ -1,0 +1,196 @@
+# Glosario y términos protegidos
+
+Este archivo alimenta al corrector `spellchecker-es`. Todo término incluido en
+la sección **Términos permitidos** se ignora durante la revisión (no se
+reporta aunque el diccionario no lo reconozca). La comparación no distingue
+mayúsculas ni acentos, así que un nombre escrito sin tilde tampoco se marcará:
+las tildes de los nombres propios deben revisarse a mano.
+
+Reglas para editar esta lista:
+
+- Agregar solo nombres propios, siglas, modelos, herramientas o anglicismos
+  técnicos admitidos por el documento.
+- No agregar palabras comunes del español (por ejemplo, `vision` o `precision`),
+  porque ocultarían errores de acentuación reales.
+- Mantener una entrada por línea, con guion y sin numeración.
+
+## Términos permitidos
+
+- ADL
+- Abstract
+- Android
+- API
+- BibTeX
+- Biber
+- BGR
+- CNN
+- COCO
+- CRISP-DM
+- CRISP-ML
+- CRISP-ML(Q)
+- CSI
+- Docker
+- ESCOM
+- FPS
+- Fall Detected
+- GitHub
+- GRU
+- INAPM
+- IoT
+- IPN
+- ISO/IEC
+- JSON
+- Kaggle
+- Keras
+- Kinect
+- kNN
+- LaTeX
+- LAN
+- LSTM
+- MediaPipe
+- MLP
+- Mosquitto
+- MQTT
+- ONNX
+- OpenCV
+- OpenPose
+- OpenVINO
+- Overleaf
+- PandaBoard
+- PDF
+- PyTorch
+- QoS
+- RAM
+- Raspberry Pi
+- RGB
+- Sitting
+- SVM
+- TensorFlow
+- TensorRT
+- TFLite
+- TT1
+- TT2
+- Ultralytics
+- UP-Fall
+- UR Fall Detection Dataset
+- USB
+- Walking
+- Wi-Fi
+- YOLO
+- YOLO26
+- YOLO26-pose
+- YOLO-Pose
+- YOLOv5
+- YOLOv8
+- broker
+- dataset
+- datasets
+- edge
+- frame
+- frames
+- include
+- keypoint
+- keypoints
+- mockup
+- mockups
+- payload
+- pose
+- publish
+- recall
+- subscribe
+- wearable
+- wearables
+- vestible
+- vestibles
+- Computing
+- convolucional
+- convolucionales
+- extend
+- metadato
+- poscaída
+- posprocesamiento
+- rutea
+- Ec
+- Villaseñor
+- Kwolek
+- Kepski
+- Martínez-Villaseñor
+- Mobasheri
+- Tabbakh
+- Forghani
+- Igual
+- Medrano
+- Plaza
+- Alam
+- Sufian
+- Dutta
+- Leo
+- Studer
+- Bui
+- Drescher
+- Hanuschkin
+- Winkler
+- Müller
+- Sapkota
+- Cheppally
+- Sharda
+- Karkee
+- Szeliski
+- LeCun
+- Bengio
+- Hinton
+- Goodfellow
+- Courville
+- Redmon
+- Divvala
+- Girshick
+- Farhadi
+- Hochreiter
+- Schmidhuber
+- Sokolova
+- Lapalme
+- Nahian
+- Raisa
+- Mahmud
+- Kaiser
+- Ahad
+- Ghosh
+- Banna
+- Hossain
+- Andersson
+- Jocher
+- Qiu
+- Lyu
+- Akyon
+- Kalfaoglu
+- Maji
+- Nagori
+- Poddar
+- Cao
+- Sheikh
+- Tsung-Yi
+- Maire
+- Belongie
+- Hays
+- Perona
+- Ramanan
+- Dollár
+- Zitnick
+- Pardo
+- Cordova
+- Sanchez
+- Fernanda
+- Correa
+- Coyac
+- Vázquez
+- Gómez
+- Irving
+- Hiram
+- Ponce
+- Brieva
+- Moya-Albor
+- Núñez
+- Peñafort
+- Kandagatla
+- Kolyshkina
+- Inna
