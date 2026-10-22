@@ -284,7 +284,7 @@ de emergencia.
 \begin{enumerate}
     \item Configurar la arquitectura de adquisición de datos mediante el uso de cámaras RGB para obtener información del entorno.
 
-    \item Implementar el modelo YOLO26 \parencite{ultralytics2026yolo26} para la estimación de pose y extracción de los puntos clave del esqueleto humano a través de imágenes RGB, obteniendo como salida las coordenadas (x, y) de un conjunto de keypoints (por ejemplo, nariz, ojos, hombros, codos, muñecas, caderas, rodillas, tobillos), optimizando el procesamiento para dispositivos edge; este procesamiento local reduce la exposición de datos y protege el anonimato del usuario.
+    \item Implementar el modelo YOLO26 \parencite{ultralytics2026yolo26} para la estimación de pose y extracción de los puntos clave del esqueleto humano a través de imágenes RGB, obteniendo como salida las coordenadas (x, y) de un conjunto de keypoints (por ejemplo, nariz, ojos, hombros, codos, muñecas, caderas, rodillas, tobillos), optimizando el procesamiento para dispositivos edge; este procesamiento local reduce la exposición de datos y disminuye la identificabilidad del usuario.
  
     \item Entrenar un modelo de inteligencia artificial capaz de clasificar con precisión entre una caída real y actividades cotidianas (sentarse, caminar, acostarse) basándose en la secuencia de posturas del esqueleto.
  
@@ -318,6 +318,7 @@ de emergencia.
   \item \textbf{Conectividad.} El envío de la alerta requiere que la placa y el teléfono del tutor tengan conexión de red LAN.
   \item \textbf{Plataforma móvil.} La aplicación se desarrollará solo para Android.
   \item \textbf{Sin almacenamiento de video.} Para proteger la privacidad no se guardan imágenes, por lo que el sistema no ofrece evidencia visual del evento.
+  \item \textbf{Sin integración con cámaras del tutor.} El prototipo no accede, controla ni recibe imágenes de cámaras particulares; si el tutor instala las suyas, su uso es independiente del sistema (Sección~\ref{sec:etica}).
   \item \textbf{Detección, no prevención.} El sistema identifica caídas ocurridas; no predice ni previene caídas.
 \end{itemize}
 
@@ -406,6 +407,40 @@ CRISP-ML(Q) consta de seis fases. La Tabla~\ref{tab:fases-crisp} muestra cómo s
 
 \paragraph{Iteración.} Como lo plantea el modelo, las fases no son estrictamente secuenciales: si en la evaluación no se alcanzan los criterios de éxito, se regresa a la preparación de los datos o a la ingeniería del modelo antes de continuar con el despliegue.
 
+\section{Consideraciones éticas y protección de datos}
+\label{sec:etica}
+
+El prototipo opera con imágenes del interior de una vivienda habitada por una persona adulta mayor, por lo que las decisiones sobre qué se captura, qué se procesa y qué se transmite constituyen restricciones de diseño y no un trámite posterior. En esta sección se exponen los principios éticos y las obligaciones de protección de datos que se adoptaron, y se justifica por qué el sistema no graba, no almacena y no envía video ni fotografías al teléfono del tutor.
+
+\subsection{Principios éticos}
+
+El trabajo se guía por los principios de la Declaración Universal sobre Bioética y Derechos Humanos de la UNESCO: la dignidad humana y la primacía del bienestar de la persona sobre el interés exclusivo de la ciencia o la sociedad (artículo 3), la autonomía y la responsabilidad individual (artículo 5), el respeto a la vulnerabilidad humana y a la integridad personal (artículo 8), y la privacidad y la confidencialidad de la información (artículo 9) \parencite{unesco2005bioetica}. De ellos se derivan los criterios que orientan el diseño:
+
+\begin{itemize}
+  \item \textbf{No maleficencia.} El sistema debe reducir el riesgo de que una caída quede sin atender, pero sin introducir un riesgo nuevo. Colocar una cámara en el hogar y transmitir imágenes añadiría un riesgo de exposición que no es indispensable para la finalidad de alertar.
+  \item \textbf{Autonomía.} La persona adulta mayor conserva la facultad de aceptar o rechazar el monitoreo, de conocer qué se registra y de revocar su consentimiento en cualquier momento.
+  \item \textbf{Vulnerabilidad.} Al tratarse de una población con mayor riesgo de lesión y de dependencia, se privilegia la protección de sus intereses por encima de la comodidad técnica del prototipo.
+  \item \textbf{Transparencia.} Lo que el sistema hace con los datos se declara de forma explícita en la aplicación y en este documento, sin prometer garantías que no puedan sostenerse técnicamente.
+\end{itemize}
+
+\subsection{Datos personales y minimización}
+
+La imagen de una persona identificable es un dato personal y adquiere el carácter de dato personal sensible cuando revela aspectos de su estado de salud, como ocurre con la imagen de una persona tendida en el suelo después de una caída \parencite{lfpdppp2025}. Para esos datos la ley exige el consentimiento expreso y por escrito de la persona titular, así como un aviso de privacidad que describa las finalidades, los datos tratados y los mecanismos para ejercer los derechos de acceso, rectificación, cancelación y oposición; además, el responsable queda sujeto al deber de confidencialidad \parencite{lfpdppp2025}.
+
+A partir de esa calificación se aplicó el principio de proporcionalidad: si la finalidad del sistema es avisar que una persona cayó, basta con transmitir el evento y sus metadatos, y no la imagen que lo originó. La carga útil descrita en el Listado~\ref{lst:json_alerta} se compone del identificador del dispositivo, el tipo de evento, la marca de tiempo, el nivel de confianza del clasificador, la postura detectada y el tiempo de inactividad; ninguno de esos campos permite reconstruir la escena. Aun así, se tratan como datos personales: circulan solo en la red local, no se comparten con terceros y la bitácora de la aplicación conserva únicamente el registro del evento, sin imágenes, para el análisis de falsas alarmas de la fase 6 de CRISP-ML(Q).
+
+\subsection{Garantías técnicas de privacidad}
+
+El cumplimiento de los requisitos RNF-001 y RNF-IA-04 no depende de una política de uso, sino de la forma en que está construido el flujo de datos: los cuadros se capturan en memoria, se procesan en la placa Edge y se sobrescriben en cuanto se extraen los 17 puntos clave del esqueleto (Sección~\ref{sec:flujo-adquisicion}); no se escribe ningún archivo de imagen o de video en almacenamiento secundario y no se emplea ningún servicio en la nube. En consecuencia, el sistema no transmite fotografías ni video en ningún caso y no puede exhibir evidencia visual de un evento, ni siquiera si el tutor la solicita; esa ausencia se declara como limitación en la Sección~\ref{sec:alcances}.
+
+\subsection{Alcance de la aplicación y cámaras del tutor}
+
+La aplicación móvil se concibe como un apoyo suplementario para el cuidado y no como un servicio de emergencias ni como un dispositivo médico: informa al tutor de un posible evento, y la valoración de la situación y la decisión de solicitar ayuda quedan en sus manos. El prototipo no se integra con cámaras particulares del tutor, no las controla y no recibe sus imágenes; si el tutor decide instalar sus propias cámaras y consultarlas, ese tratamiento es independiente del sistema, responde a su propia decisión y queda fuera del alcance de este trabajo y de su aviso de privacidad.
+
+\subsection{Consentimiento informado y ética de la investigación}
+
+La instalación del sistema requiere el consentimiento informado de la persona adulta mayor y del tutor, quienes deben conocer que se colocará una cámara en la vivienda, que el video se procesa y se descarta en el dispositivo, qué datos se transmiten al teléfono y cómo revocar la autorización. La aplicación presenta ese aviso en el registro de la cuenta (Figura~\ref{fig:mockup1}) y condiciona la vinculación del dispositivo a su aceptación. En el plano de la investigación no se registran caídas reales de adultos mayores: el entrenamiento y la validación emplean conjuntos públicos y caídas simuladas por voluntarios que otorgan su consentimiento, de modo que el prototipo no se prueba con pacientes ni en entornos hospitalarios y no emite diagnósticos (Sección~\ref{sec:alcances}).
+
 % ============================================================
 \chapter{Marco teórico}
 \label{cap:marco}
@@ -442,6 +477,19 @@ El esquema más usado es el del conjunto de datos COCO \parencite{lin2014coco}, 
 Existen dos enfoques generales. Los métodos \textit{bottom-up}, como OpenPose \parencite{cao2017openpose}, detectan primero todos los puntos clave de la imagen y después los agrupan por persona. Los métodos \textit{top-down} detectan primero a cada persona y luego estiman sus puntos dentro de la caja. YOLO-Pose \parencite{maji2022yolopose} propuso un tercer camino: extender el detector YOLO para que, en la misma pasada en que predice la caja de cada persona, prediga también sus 17 puntos clave. Los modelos de pose de YOLO26 siguen esta idea, lo que permite obtener el esqueleto con el costo de una sola inferencia.
 
 \paragraph{Pose y detección de caídas.} Una caída se caracteriza por cambios rápidos en la geometría del cuerpo: el centro de masa desciende bruscamente, el tronco pasa de vertical a horizontal y la cabeza queda a una altura similar a la de la cadera. Estas señales pueden medirse directamente a partir de las coordenadas de los puntos clave a lo largo de varios cuadros, como lo muestran trabajos que alcanzan buenos resultados usando solo unos pocos puntos \parencite{mobasheri2022fall}.
+
+\section{Detección de caídas}
+\label{sec:definicion-caida}
+
+La Organización Mundial de la Salud define las caídas como ``sucesos involuntarios que hacen perder el equilibrio y dar con el cuerpo en el suelo o en otra superficie firme que lo detenga'' \parencite{who2021caidas}; en el mismo sentido, los informes sobre prevención en la vejez describen la caída como el hecho de quedar sobre el suelo o en un nivel inferior de manera no intencional \parencite{who2008falls}. De esa definición se desprenden cuatro elementos que cualquier sistema de detección debe respetar: la pérdida de equilibrio, el carácter involuntario del suceso, el descenso a un nivel inferior y el contacto final con una superficie que detiene el cuerpo.
+
+La definición clínica describe el fenómeno, pero no indica cómo reconocerlo a partir de una cámara. Para el sistema, una caída no es una postura sino una transición: lo observable es que la persona pasa de una posición erguida a una posición en el suelo y que permanece ahí. Por ello se adopta una definición operativa: se considera que ocurrió una caída cuando la persona pasa de la postura \textit{de pie} o \textit{sentado} a la postura \textit{caído} en un intervalo menor a $\Delta t$ y permanece en ella al menos $N$ segundos, conforme a la regla temporal que se detalla en la Sección~\ref{sec:preproc-operacion}. Ambos parámetros se ajustan con datos experimentales y distinguen una caída de un descenso gradual.
+
+\paragraph{Postura caído y postura acostado.} La postura \textit{caído} corresponde al cuerpo apoyado sobre el suelo o sobre un nivel inferior, con el tronco horizontal o inclinado respecto de la vertical. Su geometría es muy parecida a la de la postura \textit{acostado}, que es voluntaria y ocurre por lo general sobre una cama o un sofá. Esa similitud es la principal fuente de falsos positivos señalada en la literatura \parencite{nahian2026ai} y la razón por la que la clasificación por cuadro se complementa con el análisis de la secuencia y con la persistencia en el tiempo, en lugar de decidir con un solo esqueleto.
+
+\paragraph{Caída, casi caída y actividad cotidiana.} Una casi caída, entendida como un tropiezo o un desequilibrio en el que la persona recupera la verticalidad sin llegar al suelo, no cumple la definición y queda fuera del alcance del prototipo: como la postura final sigue siendo erguida, el sistema no la alerta. Las actividades cotidianas como sentarse de golpe, agacharse a recoger un objeto o recostarse con rapidez comparten con la caída el descenso brusco del centro de masa, pero no terminan en la postura \textit{caído} sostenida, que es lo que la regla temporal verifica.
+
+\paragraph{Tipos de caída y alcance del prototipo.} Se distingue entre las caídas desde la propia altura, que ocurren al estar de pie o al caminar, y las caídas desde un nivel superior, como la cama, una silla o una escalera. El prototipo se ocupa de las caídas que ocurren dentro del campo de visión de una cámara fija y que producen una transición observable de postura; las que quedan fuera del encuadre, las que ocurren con oclusión total o las que suceden en un nivel superior sin transición visible quedan fuera del alcance (Sección~\ref{sec:alcances}). El sistema tampoco distingue si hubo pérdida de consciencia ni la gravedad de la lesión: esa valoración corresponde al tutor y a los servicios médicos.
 
 \section{Análisis temporal de posturas}
 \label{sec:secuencias}
@@ -946,7 +994,7 @@ Durante el funcionamiento del prototipo, cada cuadro de la cámara sigue el mism
   \item La postura se agrega a un historial de los últimos segundos, sobre el cual se aplica la regla temporal.
 \end{enumerate}
  
-\paragraph{Regla temporal.} Se considera que ocurrió una caída cuando se cumplen dos condiciones: (1) la persona pasa de \textit{de pie} o \textit{sentado} a \textit{caído} en un intervalo menor a $\Delta t$, y (2) permanece en la postura \textit{caído} durante al menos $N$ segundos. La primera condición distingue una caída de una persona que se recuesta poco a poco, y la segunda evita alertas por movimientos momentáneos, como agacharse a recoger un objeto. Como valores iniciales se proponen $\Delta t = 2$~s y $N = 2$~s, compatibles con el tiempo máximo de notificación del criterio CE-06; ambos se ajustarán durante la fase de evaluación. Cuando se cumplen las dos condiciones, el módulo entrega el evento de caída al componente de alertas (RF-IA-06).
+\paragraph{Regla temporal.} Conforme a la definición operativa de la Sección~\ref{sec:definicion-caida}, se considera que ocurrió una caída cuando se cumplen dos condiciones: (1) la persona pasa de \textit{de pie} o \textit{sentado} a \textit{caído} en un intervalo menor a $\Delta t$, y (2) permanece en la postura \textit{caído} durante al menos $N$ segundos. La primera condición distingue una caída de una persona que se recuesta poco a poco, y la segunda evita alertas por movimientos momentáneos, como agacharse a recoger un objeto. Como valores iniciales se proponen $\Delta t = 2$~s y $N = 2$~s, compatibles con el tiempo máximo de notificación del criterio CE-06; ambos se ajustarán durante la fase de evaluación. Cuando se cumplen las dos condiciones, el módulo entrega el evento de caída al componente de alertas (RF-IA-06).
  
 Ningún cuadro se almacena: cada imagen se descarta en cuanto se extraen sus puntos clave, en congruencia con el requisito de privacidad RNF-IA-04.
 
