@@ -20,11 +20,13 @@ Reglas para editar esta lista:
 - Abstract
 - Android
 - API
+- Arm
 - BibTeX
 - Biber
 - BGR
 - CNN
 - COCO
+- Cortex
 - CRISP-DM
 - CRISP-ML
 - CRISP-ML(Q)
@@ -35,10 +37,12 @@ Reglas para editar esta lista:
 - Fall Detected
 - GitHub
 - GRU
+- Hailo
 - INAPM
 - IoT
 - IPN
 - ISO/IEC
+- Jetson
 - JSON
 - Kaggle
 - Keras
@@ -55,15 +59,18 @@ Reglas para editar esta lista:
 - OpenCV
 - OpenPose
 - OpenVINO
+- Orin
 - Overleaf
 - PandaBoard
 - PDF
+- PCIe
 - PyTorch
 - QoS
 - RAM
 - Raspberry Pi
 - RGB
 - Sitting
+- Super
 - SVM
 - TensorFlow
 - TensorRT

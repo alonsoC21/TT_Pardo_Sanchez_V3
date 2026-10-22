@@ -202,7 +202,7 @@
 \addcontentsline{toc}{chapter}{Resumen}
 \markboth{Resumen}{Resumen}
 
-Las caídas son una de las principales causas de lesiones y muerte en las personas adultas mayores, y sus consecuencias se agravan cuando la ayuda tarda en llegar, como ocurre en los hogares unipersonales. Las soluciones actuales dependen de dispositivos que el usuario debe portar o activar o, en el caso de los sistemas de visión artificial, enfrentan problemas de privacidad, falsas alarmas y alto costo de cómputo. Este Trabajo Terminal propone un prototipo de sistema de detección de caídas basado en visión artificial que, mediante una cámara RGB y una placa Edge, estima el esqueleto de la persona con el modelo YOLO26-pose, clasifica su postura en cada cuadro y analiza la secuencia de posturas para identificar una caída. El video se procesa localmente y no se almacena; ante una caída, el sistema publica una alerta mediante el protocolo MQTT y una aplicación móvil Android notifica a un tutor, quien confirma o descarta el evento. El desarrollo sigue la metodología CRISP-ML(Q), que integra en un solo ciclo de vida el modelo de aprendizaje automático y la infraestructura IoT. En esta primera etapa se presentan el estado del arte, el marco teórico, los requisitos del sistema y del modelo, los criterios de éxito, entre ellos una sensibilidad y una especificidad de al menos 90\,\%, y el diseño de la arquitectura IoT, del flujo de adquisición de video, de la estrategia de preprocesamiento de datos y de las interfaces de la aplicación móvil. Estos resultados constituyen la base para la implementación, el entrenamiento y la evaluación del prototipo en la segunda etapa del proyecto.
+Las caídas son una de las principales causas de lesiones y muerte en las personas adultas mayores, y sus consecuencias se agravan cuando la ayuda tarda en llegar, como ocurre en los hogares unipersonales. Las soluciones actuales dependen de dispositivos que el usuario debe portar o activar o, en el caso de los sistemas de visión artificial, enfrentan problemas de privacidad, falsas alarmas y alto costo de cómputo. Este Trabajo Terminal propone un prototipo de sistema de detección de caídas basado en visión artificial que, mediante una cámara RGB y una placa Edge basada en Raspberry Pi 5, estima el esqueleto de la persona con el modelo YOLO26-pose, clasifica su postura en cada cuadro y analiza la secuencia de posturas para identificar una caída. El video se procesa localmente y no se almacena; ante una caída, el sistema publica una alerta mediante el protocolo MQTT y una aplicación móvil Android notifica a un tutor, quien confirma o descarta el evento. El desarrollo sigue la metodología CRISP-ML(Q), que integra en un solo ciclo de vida el modelo de aprendizaje automático y la infraestructura IoT. En esta primera etapa se presentan el estado del arte, el marco teórico, los requisitos del sistema y del modelo, los criterios de éxito, entre ellos una sensibilidad y una especificidad de al menos 90\,\%, y el diseño de la arquitectura IoT, del flujo de adquisición de video, de la estrategia de preprocesamiento de datos y de las interfaces de la aplicación móvil. Estos resultados constituyen la base para la implementación, el entrenamiento y la evaluación del prototipo en la segunda etapa del proyecto.
 
 
 \vspace{1em}
@@ -214,7 +214,7 @@ Las caídas son una de las principales causas de lesiones y muerte en las person
 \markboth{Abstract}{Abstract}
  
 \begin{otherlanguage}{english}
-Falls are one of the leading causes of injury and death among older adults, and their consequences worsen when help is delayed, as often happens in single-person households. Current solutions rely on devices that the user must wear or activate, while vision-based systems face privacy concerns, false alarms, and high computational cost. This project proposes a prototype fall detection system based on computer vision that, using an RGB camera and an edge device, estimates the person's skeleton with the YOLO26-pose model, classifies their posture in each frame, and analyzes the sequence of postures to identify a fall. Video is processed locally and never stored; when a fall is detected, the system publishes an alert through the MQTT protocol, and an Android mobile application notifies a caregiver, who confirms or dismisses the event. Development follows the CRISP-ML(Q) methodology, which integrates the machine learning model and the IoT infrastructure into a single life cycle. This first stage presents the state of the art, the theoretical framework, the system and model requirements, the success criteria, including a sensitivity and specificity of at least 90\%, and the design of the IoT architecture, the video acquisition flow, the data preprocessing strategy, and the mobile application interfaces. These results lay the foundation for the implementation, training, and evaluation of the prototype in the second stage of the project.
+Falls are one of the leading causes of injury and death among older adults, and their consequences worsen when help is delayed, as often happens in single-person households. Current solutions rely on devices that the user must wear or activate, while vision-based systems face privacy concerns, false alarms, and high computational cost. This project proposes a prototype fall detection system based on computer vision that, using an RGB camera and a Raspberry Pi 5 edge device, estimates the person's skeleton with the YOLO26-pose model, classifies their posture in each frame, and analyzes the sequence of postures to identify a fall. Video is processed locally and never stored; when a fall is detected, the system publishes an alert through the MQTT protocol, and an Android mobile application notifies a caregiver, who confirms or dismisses the event. Development follows the CRISP-ML(Q) methodology, which integrates the machine learning model and the IoT infrastructure into a single life cycle. This first stage presents the state of the art, the theoretical framework, the system and model requirements, the success criteria, including a sensitivity and specificity of at least 90\%, and the design of the IoT architecture, the video acquisition flow, the data preprocessing strategy, and the mobile application interfaces. These results lay the foundation for the implementation, training, and evaluation of the prototype in the second stage of the project.
 
 
 \vspace{1em}
@@ -266,7 +266,7 @@ De ahí surge la pregunta que guía este trabajo: \textit{¿es posible detectar 
 \section{Justificación}
 El presente Trabajo Terminal propone una solución técnica óptima para la detección de caídas, integrando metodologías que han demostrado resultados favorables en investigaciones anteriores. El enfoque primordial es salvaguardar la integridad física del adulto mayor mediante un monitoreo constante que permita reducir los tiempos de respuesta ante emergencias médicas.
 
-A diferencia de sistemas convencionales, este proyecto busca optimizar la detección al implementar YOLO26, una arquitectura reciente de visión por computadora diseñada para el procesamiento en tiempo real. Esta se complementa con una plataforma de hardware en una placa Edge. El procesamiento local reduce la exposición de datos de los usuarios al evitar el almacenamiento de frames en la nube, promoviendo así su privacidad y seguridad.
+A diferencia de sistemas convencionales, este proyecto busca optimizar la detección al implementar YOLO26, una arquitectura reciente de visión por computadora diseñada para el procesamiento en tiempo real. Esta se complementa con una placa Edge basada en Raspberry Pi 5, cuya selección se justifica en la Sección~\ref{sec:seleccion-placa}. El procesamiento local reduce la exposición de datos de los usuarios al evitar el almacenamiento de frames en la nube, promoviendo así su privacidad y seguridad.
 
 La solución está orientada directamente a resolver la problemática de los hogares unipersonales, un sector donde investigaciones previas han confirmado la factibilidad técnica de la detección de caídas, pero donde aún existe una brecha en la implementación de sistemas no invasivos y de alta precisión que se adapten a la vida cotidiana del usuario.
 
@@ -299,7 +299,7 @@ de emergencia.
 \subsection{Alcances}
 \begin{itemize}
   \item Se desarrollará un \textbf{prototipo funcional}, no un producto comercial, que integre la captura de video, la detección de caídas y la notificación al tutor.
-  \item El sistema utilizará \textbf{una cámara RGB} conectada a una \textbf{placa Edge}, donde se ejecutarán la estimación de pose con YOLO26 \citep{sapkota2025yolo26} el clasificador de posturas y el análisis temporal de la secuencia de posturas.
+  \item El sistema utilizará \textbf{una cámara RGB} conectada a una \textbf{placa Edge basada en Raspberry Pi 5}, donde se ejecutarán la estimación de pose con YOLO26 \citep{sapkota2025yolo26} el clasificador de posturas y el análisis temporal de la secuencia de posturas.
   \item El sistema está pensado para \textbf{una persona en una habitación interior} con iluminación artificial o natural suficiente.
   \item El clasificador reconocerá en cada cuadro cuatro posturas: \textbf{de pie}, \textbf{sentado}, \textbf{acostado} y \textbf{caído}; a partir de su secuencia, el sistema decidirá si ocurrió una \textbf{caída} o una actividad cotidiana, considerando caminar, sentarse, acostarse y agacharse.
   \item El modelo se entrenará y validará con \textbf{conjuntos de datos públicos} de caídas y actividades de la vida diaria, complementados con un conjunto de validación capturado por el equipo en condiciones controladas.
@@ -360,7 +360,7 @@ La Tabla~\ref{tab:estado-arte} resume los trabajos revisados y los compara con l
 \addlinespace
 \textcite{mobasheri2022fall} & Cámara RGB (video de UP-Fall) & MediaPipe + LSTM & Evaluación fuera de línea \\
 \addlinespace
-\textbf{Propuesta} & \textbf{Una cámara RGB} & \textbf{YOLO26-pose + clasificador de posturas con análisis temporal} & \textbf{Placa Edge; alerta al tutor vía MQTT y aplicación Android} \\
+\textbf{Propuesta} & \textbf{Una cámara RGB} & \textbf{YOLO26-pose + clasificador de posturas con análisis temporal} & \textbf{Placa Edge (Raspberry Pi 5); alerta al tutor vía MQTT y aplicación Android} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -391,7 +391,7 @@ CRISP-ML(Q) consta de seis fases. La Tabla~\ref{tab:fases-crisp} muestra cómo s
 \addlinespace
 2. Preparación de los datos & Selección de conjuntos de datos públicos, estrategia de preprocesamiento de imágenes RGB y diseño del flujo de adquisición (resolución, FPS, formato de cuadros). Aumento de datos y balanceo de clases. & Sep -- oct 2026 (TT1); ene 2027 (TT2) \\
 \addlinespace
-3. Ingeniería del modelo & Estimación de pose y extracción de esqueletos; entrenamiento del clasificador de posturas y ajuste de la regla temporal; configuración de la placa Edge y medición de modelos candidatos en el hardware; conversión a formato ligero. & Oct -- nov 2026 (TT1); ene -- mar 2027 (TT2) \\
+3. Ingeniería del modelo & Estimación de pose y extracción de esqueletos; entrenamiento del clasificador de posturas y ajuste de la regla temporal; configuración de la Raspberry Pi 5 y medición de modelos candidatos en el hardware; conversión a formato ligero. & Oct -- nov 2026 (TT1); ene -- mar 2027 (TT2) \\
 \addlinespace
 4. Evaluación & Cálculo de sensibilidad, especificidad, precisión y exactitud; pruebas de integración de extremo a extremo (latencia, MQTT, entrega de alertas) contra los criterios de éxito de la fase 1. & Abr -- may 2027 \\
 \addlinespace
@@ -402,7 +402,7 @@ CRISP-ML(Q) consta de seis fases. La Tabla~\ref{tab:fases-crisp} muestra cómo s
 \end{tabular}
 \end{table}
 
-\paragraph{Aseguramiento de la calidad.} Siguiendo el enfoque de CRISP-ML(Q), al cierre de cada fase se verifica que sus entregables cumplan lo necesario para la siguiente y se registran los riesgos detectados. Los principales riesgos identificados desde la fase 1 son: (1) que el modelo no alcance las métricas objetivo con caídas reales, dado que los datos públicos contienen caídas simuladas; (2) que el modelo no alcance la tasa de cuadros requerida en la placa Edge; y (3) que las falsas alarmas reduzcan la confianza del tutor en el sistema. Estos riesgos se atienden, respectivamente, con un conjunto de validación capturado en condiciones reales, con la medición temprana de modelos candidatos en el hardware y con el análisis de las alertas descartadas en la fase 6.
+\paragraph{Aseguramiento de la calidad.} Siguiendo el enfoque de CRISP-ML(Q), al cierre de cada fase se verifica que sus entregables cumplan lo necesario para la siguiente y se registran los riesgos detectados. Los principales riesgos identificados desde la fase 1 son: (1) que el modelo no alcance las métricas objetivo con caídas reales, dado que los datos públicos contienen caídas simuladas; (2) que el modelo no alcance la tasa de cuadros requerida en la Raspberry Pi 5; y (3) que las falsas alarmas reduzcan la confianza del tutor en el sistema. Estos riesgos se atienden, respectivamente, con un conjunto de validación capturado en condiciones reales, con la medición temprana de modelos candidatos en el hardware y con el análisis de las alertas descartadas en la fase 6.
 
 \paragraph{Iteración.} Como lo plantea el modelo, las fases no son estrictamente secuenciales: si en la evaluación no se alcanzan los criterios de éxito, se regresa a la preparación de los datos o a la ingeniería del modelo antes de continuar con el despliegue.
 
@@ -644,7 +644,7 @@ RNF-IA-06 & Trazabilidad & Cada experimento de entrenamiento debe registrar dato
   \item Se utiliza una sola cámara RGB convencional; no se emplean sensores de profundidad ni dispositivos portables.
   \item El sistema está pensado para un adulto mayor en una habitación; escenas con varias personas quedan fuera del alcance.
   \item Por la dificultad ética de obtener caídas reales de adultos mayores, el entrenamiento se basa en conjuntos de datos públicos con caídas simuladas \parencite{igual2013challenges,alam2022review}; esta limitación se mitiga con un conjunto de validación capturado en condiciones reales.
-  \item La capacidad de cómputo y la memoria están limitadas por la placa Edge seleccionada, por lo que se priorizan las variantes compactas de YOLO26-pose \parencite{sapkota2025yolo26}.
+  \item La capacidad de cómputo y la memoria están limitadas por la placa Edge seleccionada, la Raspberry Pi 5, por lo que se priorizan las variantes compactas de YOLO26-pose \parencite{sapkota2025yolo26}.
 \end{itemize}
 
 \section{Métricas objetivo y criterios de éxito}
@@ -669,7 +669,7 @@ CE-03 & Precisión (Ec.~\ref{eq:precision}) & $\geq 85$\,\% & Asegura que la may
 \addlinespace
 CE-04 & Exactitud (Ec.~\ref{eq:exactitud}) & $\geq 90$\,\% & Desempeño global; se reporta junto con las demás por el desbalance de clases. \\
 \addlinespace
-CE-05 & Tasa de procesamiento en la placa Edge & $\geq 5$ FPS & Permite registrar varios cuadros durante el descenso del cuerpo, que ocurre en un intervalo breve. \\
+CE-05 & Tasa de procesamiento en la Raspberry Pi 5 & $\geq 5$ FPS & Permite registrar varios cuadros durante el descenso del cuerpo, que ocurre en un intervalo breve. \\
 \addlinespace
 CE-06 & Tiempo de extremo a extremo (caída $\rightarrow$ notificación en el teléfono) & $\leq 8$ s & Permite que el tutor reaccione de inmediato. \textit{Criterio definido con el subsistema IoT.} \\
 \bottomrule
@@ -689,7 +689,7 @@ Para dar solución a los requerimientos de protección de datos personales, el s
 
 \begin{enumerate}
     \item \textbf{Capa de Percepción:} Integrada por un nodo sensor visual (cámara RGB) conectado de manera cableada al dispositivo local, asegurando un suministro de imágenes ininterrumpido y exento de latencias de transmisión sobre red de área local (LAN).
-    \item \textbf{Capa de Cómputo Edge:} Compuesta por una placa Edge perimetral donde reside la unidad de procesamiento neuronal de YOLO26. Esta capa delimita la "zona cero" de privacidad: procesa cada tensor visual, extrae la pose y destruye de inmediato las imágenes crudas directamente en memoria, impidiendo que material visual privado abandone el dispositivo.
+    \item \textbf{Capa de Cómputo Edge:} Compuesta por una Raspberry Pi 5 que actúa como placa Edge perimetral, donde reside el módulo de inferencia de YOLO26. Esta capa delimita la "zona cero" de privacidad: procesa cada tensor visual, extrae la pose y destruye de inmediato las imágenes crudas directamente en memoria, impidiendo que material visual privado abandone el dispositivo.
     \item \textbf{Capa de Mensajería:} Representada por el servidor ligero Mosquitto MQTT \parencite{mqtt2026estandar}. Esta capa aísla la carga pesada (la imagen) de la carga liviana (el metadato de alerta) y rutea los mensajes JSON hacia LAN de forma instantánea tras clasificar exitosamente un riesgo de caída.
     \item \textbf{Capa de Aplicación:} Compuesta por un terminal móvil inteligente dotado de la aplicación nativa en Android \parencite{uv2026desarrollo}, el cual consume remotamente (bajo redes de área amplia o LAN) el tópico MQTT, habilitando al usuario final en tiempo real.
 \end{enumerate}
@@ -707,7 +707,7 @@ Para dar solución a los requerimientos de protección de datos personales, el s
 
 % Nodos
 \node[percep] (cam) {\textbf{Capa de Percepción}\\Cámara RGB};
-\node[edgebox, right=3.5cm of cam] (edge) {\textbf{Capa Edge Computing}\\Placa Edge (Docker)\\Inferencia YOLO26};
+\node[edgebox, right=3.5cm of cam] (edge) {\textbf{Capa Edge Computing}\\Raspberry Pi 5\\(Docker)\\Inferencia YOLO26};
 \node[broker, below=1.8cm of edge] (broker) {\textbf{Capa de Mensajería}\\Broker Mosquitto MQTT};
 \node[appbox, below=1.8cm of cam] (app) {\textbf{Capa de Aplicación}\\App Móvil Android};
 
@@ -730,7 +730,7 @@ Para dar solución a los requerimientos de protección de datos personales, el s
 \end{figure}
 
 \subsection{Estructura de tópicos MQTT y formato de mensajes}
-La comunicación entre la placa Edge y la aplicación móvil se gestiona a través del \textit{broker} de código abierto \textbf{Eclipse Mosquitto} operando con nivel de calidad de servicio \textbf{QoS 1} (\textit{at least once}), lo que garantiza la recepción del mensaje de emergencia sin exceder el límite de latencia de red de 2 segundos (\textbf{RNF-003}). Se define la siguiente estructura de tópicos:
+La comunicación entre la Raspberry Pi 5 y la aplicación móvil se gestiona a través del \textit{broker} de código abierto \textbf{Eclipse Mosquitto} operando con nivel de calidad de servicio \textbf{QoS 1} (\textit{at least once}), lo que garantiza la recepción del mensaje de emergencia sin exceder el límite de latencia de red de 2 segundos (\textbf{RNF-003}). Se define la siguiente estructura de tópicos:
 
 \begin{itemize}
     \item \texttt{alertas/caidas/\{device\_id\}}: Tópico principal en el que la placa Edge publica el evento positivo de caída y al cual permanece suscrita la aplicación móvil del tutor.
@@ -740,7 +740,7 @@ La comunicación entre la placa Edge y la aplicación móvil se gestiona a trav�
 Cuando el módulo de inteligencia artificial confirma una caída conforme a la regla temporal ($\Delta t \leq 2\text{ s}$ y permanencia en el suelo $N \geq 2\text{ s}$), entrega la marca de tiempo y el nivel de confianza (\textbf{RF-IA-06}) para construir la carga útil (\textit{payload}) en formato JSON que se muestra en el Listado~\ref{lst:json_alerta}.
 \newpage
 
-\begin{lstlisting}[caption={Estructura del paquete JSON publicado por la placa Edge ante una caída detectada.}, label={lst:json_alerta}]
+\begin{lstlisting}[caption={Estructura del paquete JSON publicado por la Raspberry Pi 5 ante una caída detectada.}, label={lst:json_alerta}]
 {
   "device_id": "EG-014",
   "event_type": "FALL_DETECTED",
@@ -802,13 +802,48 @@ El comportamiento operativo del sistema ante la evaluación continua de secuenci
 \end{figure}
 
 
+\section{Selección de la plataforma de cómputo en el borde}
+\label{sec:seleccion-placa}
+
+La arquitectura de la Figura~\ref{fig:arquitectura_iot} reserva una capa de cómputo en el borde para ejecutar la estimación de pose, el clasificador de posturas, la regla temporal y el cliente MQTT, pero no impone un hardware específico. Para el prototipo se compararon cinco placas de desarrollo de uso común en proyectos de visión artificial y se seleccionó la Raspberry Pi 5. La evaluación se guio por seis criterios derivados de los requisitos de las Secciones~\ref{sec:req-sistema} y~\ref{sec:req-ia}: (1) capacidad de cómputo suficiente para sostener una tasa de al menos 5~FPS (CE-05); (2) memoria de al menos 4~GB para el modelo, el sistema operativo y el cliente de mensajería (RNF-IA-03); (3) soporte de los formatos de exportación de YOLO26-pose y de OpenCV (RNF-IA-02); (4) interfaz de cámara CSI o USB y conectividad Ethernet o Wi-Fi para publicar en el \textit{broker} (RNF-003); (5) costo y consumo eléctrico compatibles con el presupuesto del prototipo; y (6) disponibilidad de suministro y documentación técnica durante el periodo del proyecto.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparación de placas de desarrollo candidatas para la capa de cómputo en el borde.}
+\label{tab:comparativa-placas}
+\small
+\begin{tabular}{L{2.5cm}L{2.7cm}L{2.3cm}L{1.1cm}L{1.6cm}L{2.3cm}}
+\toprule
+\textbf{Placa} & \textbf{CPU / GPU} & \textbf{Acelerador de IA} & \textbf{RAM} & \textbf{Costo (USD)} & \textbf{Resultado} \\
+\midrule
+Raspberry Pi 5 (8~GB) & 4 Cortex-A76 a 2,4~GHz; GPU VideoCore VII & Ninguno; Hailo-8L opcional por PCIe & 8~GB & 110--140 & Seleccionada \\
+\addlinespace
+Raspberry Pi 4 (4~GB) & 4 Cortex-A53 a 1,8~GHz; GPU VideoCore VI & Ninguno & 4~GB & 70--90 & Descartada: menor desempeño \\
+\addlinespace
+Jetson Orin Nano Super & 6 Cortex-A78AE; GPU Ampere & GPU, hasta 67 TOPS & 8~GB & $\approx$ 400 & Descartada: costo y consumo \\
+\addlinespace
+Coral Dev Board & 4 Cortex-A53 a 1,5~GHz & Edge TPU, 4 TOPS & 1~GB & 120--150 & Descartada: memoria y suministro \\
+\addlinespace
+Orange Pi 5 (8~GB) & 4 Cortex-A76 y 4 Cortex-A55; GPU Mali-G610 & NPU, 6 TOPS & 8~GB & 85--110 & Descartada: soporte del NPU \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los datos técnicos de la Tabla~\ref{tab:comparativa-placas} provienen de las hojas de datos y de los sitios oficiales de cada fabricante \parencite{raspberrypi2026pi5,raspberrypi2026pi4,nvidia2026jetson,coral2026devboard,orangepi2026pi5}. Los costos son estimaciones a partir de los precios de lista de cada fabricante y de los ajustes de precio anunciados durante 2026, por lo que se emplean solo como orden de magnitud \parencite{raspberrypi2026precios}.
+
+\paragraph{Raspberry Pi 5.} Se adopta la variante con 8~GB de memoria, que integra un procesador Broadcom BCM2712 de cuatro núcleos Arm Cortex-A76 a 2,4~GHz, memoria LPDDR4X, una GPU VideoCore VII, un puerto PCIe 2.0, dos conectores MIPI para cámara y pantalla, Ethernet Gigabit, Wi-Fi de doble banda, Bluetooth 5.0 y 40 pines de propósito general \parencite{raspberrypi2026pi5}. La placa no incluye una unidad de procesamiento neuronal, de modo que la inferencia se ejecuta en la CPU; esto es viable porque YOLO26 se diseñó para dispositivos de borde y puede exportarse a ONNX, TensorRT, TFLite o OpenVINO con cuantización de 8 bits \parencite{sapkota2025yolo26}. Si en la fase 3 de CRISP-ML(Q) la tasa de procesamiento no alcanza el criterio CE-05, el mismo puerto PCIe permite añadir un acelerador Hailo-8L de 13 TOPS sin cambiar de plataforma \parencite{raspberrypi2026aihat}. La variante de 8~GB se prefiere sobre las de 2 y 4~GB para dejar margen al sistema operativo, al contenedor de Docker, a OpenCV y al cliente MQTT, en cumplimiento del requisito RNF-IA-03, y se alimenta con una fuente USB-C de 5~V y 5~A (25~W) que cubre el consumo de la cámara y de la interfaz de red.
+
+\paragraph{Alternativas descartadas.} La Raspberry Pi 4 tiene un costo menor, pero su procesador Cortex-A53 de cuatro núcleos a 1,8~GHz es de una generación anterior, carece de PCIe y no ofrece una ruta de ampliación si el modelo no alcanza la tasa requerida \parencite{raspberrypi2026pi4}; la diferencia de precio no compensa el menor desempeño. La Jetson Orin Nano Super es la opción más potente del conjunto, con hasta 67 TOPS en su GPU Ampere y 8~GB de memoria LPDDR5 \parencite{nvidia2026jetson}, pero cuesta alrededor del triple, consume hasta 25~W y su capacidad excede lo que necesita un modelo compacto que solo debe procesar entre 5 y 7 cuadros por segundo. La Coral Dev Board integra una Edge TPU de 4 TOPS con bajo consumo, pero limita la placa a 1~GB de memoria y exige convertir el modelo por completo a TFLite con cuantización entera, además de que su suministro y soporte se han reducido \parencite{coral2026devboard}. Por último, la Orange Pi 5 ofrece un procesador RK3588S con una NPU de 6 TOPS y un precio menor, pero su acelerador requiere la cadena de herramientas RKNN y su documentación y comunidad son más reducidas, lo que añade riesgo técnico a un proyecto con calendario fijo \parencite{orangepi2026pi5}.
+
+\paragraph{Decisión.} Por lo anterior, la Raspberry Pi 5 de 8~GB se adopta como placa Edge del prototipo. La decisión no altera la arquitectura definida en la Sección~\ref{sec:arquitectura-iot}: la placa conserva el papel de capa de cómputo local, mantiene el procesamiento y el descarte de las imágenes dentro de la vivienda (RNF-001) y actúa como cliente publicador del \textit{broker} Mosquitto. El cumplimiento de los criterios CE-05 y CE-06 se verificará con mediciones sobre este hardware en la fase 3 de CRISP-ML(Q) y, si no se alcanza, se recurrirá al acelerador mencionado antes de considerar un cambio de plataforma.
+
 \section{Flujo de adquisición de video}
 \label{sec:flujo-adquisicion}
 
-El flujo de adquisición de video parametriza la captura óptica en la placa Edge para suministrar cuadros de forma continua al módulo de inteligencia artificial, evitando cuellos de botella en la memoria y el procesador. Los parámetros de operación se definieron en conjunto con los requisitos del extractor de pose (\textbf{RF-IA-01}) y la estrategia de preprocesamiento en operación (Sección~4.3.3):
+El flujo de adquisición de video parametriza la captura óptica en la Raspberry Pi 5 para suministrar cuadros de forma continua al módulo de inteligencia artificial, evitando cuellos de botella en la memoria y el procesador. Los parámetros de operación se definieron en conjunto con los requisitos del extractor de pose (\textbf{RF-IA-01}) y la estrategia de preprocesamiento en operación (Sección~\ref{sec:preproc-operacion}):
 
 \begin{itemize}
-    \item \textbf{Interfaz de captura y resolución de entrada:} La cámara RGB se conecta localmente mediante interfaz cableada (USB 2.0 / CSI) a la placa Edge. La captura nativa se configura a una resolución base de $640 \times 480$ píxeles (relación de aspecto 4:3) y se redimensiona en memoria mediante OpenCV para que el lado mayor sea de $640\text{ píxeles}$, coincidiendo con la dimensión de entrada del modelo \texttt{YOLO26-pose}.
+    \item \textbf{Interfaz de captura y resolución de entrada:} La cámara RGB se conecta localmente mediante interfaz cableada (USB 2.0 / CSI) a la Raspberry Pi 5. La captura nativa se configura a una resolución base de $640 \times 480$ píxeles (relación de aspecto 4:3) y se redimensiona en memoria mediante OpenCV para que el lado mayor sea de $640\text{ píxeles}$, coincidiendo con la dimensión de entrada del modelo \texttt{YOLO26-pose}.
     \item \textbf{Tasa de cuadros por segundo (FPS):} El flujo de adquisición se regula a una tasa de captura sostenida de $5$ a $7\text{ FPS}$, garantizando una frecuencia de procesamiento en la placa superior al umbral mínimo establecido en los criterios de éxito (\textbf{CE-05}: $\geq 5\text{ FPS}$). Esta frecuencia temporal permite capturar con suficiente granularidad el descenso rápido del cuerpo durante una caída (intervalo $\Delta t \leq 2\text{ s}$) sin saturar la cola de lectura.
     \item \textbf{Formato de los cuadros en memoria (acuerdo con el módulo de IA):} La biblioteca OpenCV decodifica cada cuadro de la cámara como un arreglo matricial tridimensional de 8 bits por canal ($\texttt{uint8}$, con valores de intensidad entre $0$ y $255$) en orden de canales \texttt{BGR}. Antes de entregarse al modelo de estimación de pose, el arreglo se transforma en memoria RAM al espacio de color \texttt{RGB} con dimensiones $H \times W \times 3$.
     \item \textbf{Gestión de memoria volátil y privacidad:} En cumplimiento con los requisitos \textbf{RNF-001} y \textbf{RNF-IA-04}, no se realiza escritura de archivos de imagen ni de video en almacenamiento secundario. Se utiliza un búfer de lectura de un solo cuadro (\textit{single-frame buffer}) para descartar cuadros rezagados y procesar únicamente el instante actual; una vez extraídos los 17 puntos clave del esqueleto, el tensor de imagen se sobrescribe de inmediato en la memoria RAM.
@@ -899,6 +934,7 @@ Cada imagen del conjunto de datos pasa por los siguientes pasos para convertirse
 El balanceo de clases y el aumento de datos se realizarán en la fase 2 de TT2, una vez completado el conjunto.
  
 \subsection{Preprocesamiento durante la operación}
+\label{sec:preproc-operacion}
  
 Durante el funcionamiento del prototipo, cada cuadro de la cámara sigue el mismo tratamiento que los datos de entrenamiento, de modo que el clasificador reciba entradas con las mismas características con las que fue entrenado:
  
