@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mockup 6 · Historial de eventos</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .top { height: 50px; padding: 6px 22px 0; display: flex; align-items: center; gap: 11px; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 11px; background: #F2EFE7;
+    display: flex; align-items: center; justify-content: center; color: #6E6A64;
+  }
+  .top .who { flex: 1 1 auto; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+  .top .who em { font-style: normal; color: var(--muted); font-weight: 500; }
+  h1.title { font-size: 29px; margin-top: 14px; }
+  p.lead { margin-top: 8px; font-size: 14px; }
+  .seg {
+    margin-top: 14px; height: 44px; padding: 4px;
+    display: flex; gap: 4px; background: #F0EDE5; border-radius: 999px;
+  }
+  .seg span {
+    flex: 1 1 0; display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; font-weight: 600; color: #7A756E; border-radius: 999px; text-align: center;
+  }
+  .seg span.on { background: #FFFFFF; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .day { margin: 22px 0 10px; font-size: 12.5px; font-weight: 700; color: #57534D; }
+  .ev { position: relative; padding: 0 0 20px 22px; }
+  .ev::before { content: ""; position: absolute; left: 4px; top: 14px; bottom: 0; width: 1px; background: var(--line); }
+  .ev:last-child::before { display: none; }
+  .ev .dot { position: absolute; left: 0; top: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--green); }
+  .ev.alert { padding: 12px 14px 13px 22px; border-radius: 16px; background: var(--red-soft); margin-bottom: 20px; }
+  .ev.alert::before { display: none; }
+  .ev.alert .dot { background: var(--red); top: 17px; left: 12px; }
+  .ev .time { font-size: 12px; color: var(--muted); }
+  .ev .name { margin-top: 2px; font-size: 14.5px; font-weight: 650; letter-spacing: -0.01em; }
+  .ev .desc { margin-top: 3px; font-size: 13px; line-height: 1.45; color: #6E6A64; }
+  .ev.alert .name { display: flex; align-items: center; justify-content: space-between; }
+  .ev.alert .tag { font-size: 11px; font-weight: 700; color: var(--red-deep); }
+  .ev.alert .desc { color: #7A5B57; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="status">
+    <span>10:24</span>
+    <span class="icons">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.2" width="2.8" height="3.8" rx="0.9"/><rect x="4.7" y="4.8" width="2.8" height="6.2" rx="0.9"/><rect x="9.4" y="2.4" width="2.8" height="8.6" rx="0.9"/><rect x="14.1" y="0" width="2.8" height="11" rx="0.9"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 3.6a10 10 0 0 1 14 0"/><path d="M3.6 6.3a6.4 6.4 0 0 1 8.8 0"/><path d="M6.2 9a2.8 2.8 0 0 1 3.6 0"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.7" y="0.7" width="19.6" height="10.6" rx="3" stroke="currentColor" stroke-width="1.3" opacity="0.5"/><rect x="2.4" y="2.4" width="13.5" height="7.2" rx="1.6" fill="currentColor"/><path d="M22 4.2v3.6a2 2 0 0 0 0-3.6z" fill="currentColor" opacity="0.5"/></svg>
+    </span>
+  </div>
+
+  <div class="top">
+    <div class="avatar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 19.6a7.2 7.2 0 0 1 14 0"/></svg>
+    </div>
+    <div class="who">Abuelo José · <em>EG-014</em></div>
+  </div>
+
+  <div class="body">
+    <h1 class="title">Historial de cuidado</h1>
+    <p class="lead">Cada aviso, con su contexto.</p>
+
+    <div class="seg">
+      <span class="on">Todos</span>
+      <span>Alerta resuelta</span>
+      <span>Informativo</span>
+    </div>
+
+    <div class="day">Hoy · 12 de octubre</div>
+
+    <div class="ev">
+      <span class="dot"></span>
+      <div class="time">10:24</div>
+      <div class="name">Cuidado activo</div>
+      <div class="desc">Dispositivo EG-014 conectado.</div>
+    </div>
+
+    <div class="ev alert">
+      <span class="dot"></span>
+      <div class="time">10:18</div>
+      <div class="name">Alerta de caída resuelta <span class="tag">Resuelta</span></div>
+      <div class="desc">El tutor confirmó que el adulto mayor está bien. Falsa alarma registrada a las 10:21.</div>
+    </div>
+
+    <div class="day">Ayer · 11 de octubre</div>
+
+    <div class="ev">
+      <span class="dot"></span>
+      <div class="time">18:42</div>
+      <div class="name">Dispositivo vinculado</div>
+      <div class="desc">EG-014 asignado a Abuelo José.</div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="item">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.4S4.2 15.9 4.2 10.6A4.4 4.4 0 0 1 12 7.6a4.4 4.4 0 0 1 7.8 3c0 5.3-7.8 9.8-7.8 9.8z"/></svg>
+      Inicio
+    </div>
+    <div class="item">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5.5v13"/><path d="M5.5 12h13"/></svg>
+      Agregar
+    </div>
+    <div class="item on">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 12a8.4 8.4 0 1 0 2.6-6.1"/><path d="M3.6 4.6V9h4.4"/><path d="M12 8.2V12l2.8 1.8"/></svg>
+      Historial
+    </div>
+  </div>
+  <span class="homebar"></span>
+</div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mockup 5 · Alerta crítica</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  :root { --bg: #FDF6F4; }
+  .top { height: 52px; padding: 6px 22px 0; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-size: 19px; font-weight: 700; letter-spacing: -0.03em; }
+  .brand span { color: var(--green); }
+  .alert-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: #FBE3DF; color: var(--red-deep);
+    font-size: 11.5px; font-weight: 700; padding: 6px 11px; border-radius: 999px;
+  }
+  .alert-pill i { width: 6px; height: 6px; border-radius: 50%; background: var(--red); display: block; }
+  .rings { position: relative; width: 168px; height: 168px; margin: 6px auto 0; }
+  .ring-a { position: absolute; inset: 0; border-radius: 50%; background: rgba(210,65,58,0.10); }
+  .ring-b { position: absolute; inset: 18px; border-radius: 50%; background: rgba(210,65,58,0.12); }
+  .ring-c {
+    position: absolute; inset: 36px; border-radius: 50%; background: #FFFFFF;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 22px rgba(210,65,58,0.14);
+  }
+  h1.title { text-align: center; font-size: 30px; line-height: 1.12; margin-top: 16px; }
+  p.lead { text-align: center; margin-top: 10px; font-size: 14.5px; }
+  .event { margin-top: 16px; padding: 0 16px 12px; background: #FFFFFF; border: 1px solid #F2DEDA; border-radius: 20px; }
+  .event .person { display: flex; align-items: center; gap: 12px; padding: 14px 0 12px; border-bottom: 1px solid #F2E7E4; }
+  .event .avatar {
+    width: 40px; height: 40px; border-radius: 13px; background: #F6EDEA;
+    display: flex; align-items: center; justify-content: center; color: #8A6F68;
+  }
+  .event .person b { display: block; font-size: 15.5px; font-weight: 650; letter-spacing: -0.01em; }
+  .event .person em { font-style: normal; font-size: 12.5px; color: var(--muted); }
+  .event .meta { display: flex; align-items: center; justify-content: space-between; padding-top: 11px; font-size: 13px; color: var(--muted); }
+  .event .meta b { color: var(--ink); font-weight: 600; }
+  .note { margin-top: 12px; }
+  .btn.red { margin-top: 14px; letter-spacing: 0.04em; }
+  .dismiss { margin-top: 14px; text-align: center; font-size: 15.5px; font-weight: 650; }
+  .dismiss small { display: block; margin-top: 3px; font-size: 12.5px; font-weight: 400; color: #8A857E; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="status">
+    <span>10:18</span>
+    <span class="icons">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.2" width="2.8" height="3.8" rx="0.9"/><rect x="4.7" y="4.8" width="2.8" height="6.2" rx="0.9"/><rect x="9.4" y="2.4" width="2.8" height="8.6" rx="0.9"/><rect x="14.1" y="0" width="2.8" height="11" rx="0.9"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 3.6a10 10 0 0 1 14 0"/><path d="M3.6 6.3a6.4 6.4 0 0 1 8.8 0"/><path d="M6.2 9a2.8 2.8 0 0 1 3.6 0"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.7" y="0.7" width="19.6" height="10.6" rx="3" stroke="currentColor" stroke-width="1.3" opacity="0.5"/><rect x="2.4" y="2.4" width="13.5" height="7.2" rx="1.6" fill="currentColor"/><path d="M22 4.2v3.6a2 2 0 0 0 0-3.6z" fill="currentColor" opacity="0.5"/></svg>
+    </span>
+  </div>
+
+  <div class="top">
+    <div class="brand">Elder<span>Guard</span></div>
+    <span class="alert-pill"><i></i>Alerta activa</span>
+  </div>
+
+  <div class="body">
+    <div class="rings">
+      <span class="ring-a"></span>
+      <span class="ring-b"></span>
+      <span class="ring-c">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.1" stroke-linecap="round"><path d="M12 6.2v7.4"/><circle cx="12" cy="17.6" r="1.3" fill="var(--red)" stroke="none"/></svg>
+      </span>
+    </div>
+
+    <h1 class="title">Posible caída<br>detectada</h1>
+    <p class="lead">Abuelo José podría necesitar ayuda.<br>Comprueba cómo se encuentra.</p>
+
+    <div class="event">
+      <div class="person">
+        <div class="avatar">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 19.6a7.2 7.2 0 0 1 14 0"/></svg>
+        </div>
+        <div>
+          <b>Abuelo José</b>
+          <em>Dispositivo conectado</em>
+        </div>
+      </div>
+      <div class="meta"><span>Hoy, <b>10:18</b></span><span>EG-014</span></div>
+    </div>
+
+    <p class="note">Si no puedes confirmar que está bien,<br>llama a emergencias.</p>
+
+    <div class="btn red">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7.3 3.8h2.9l1.5 3.9-2 1.4a11.4 11.4 0 0 0 5.2 5.2l1.4-2 3.9 1.5v2.9a2.3 2.3 0 0 1-2.5 2.3A15.7 15.7 0 0 1 5 6.3a2.3 2.3 0 0 1 2.3-2.5z"/></svg>
+      LLAMAR AL 911
+    </div>
+
+    <div class="dismiss">
+      Falsa Alarma
+      <small>Solo si confirmas que el adulto mayor está bien.</small>
+    </div>
+  </div>
+  <span class="homebar"></span>
+</div>
+</body>
+</html>

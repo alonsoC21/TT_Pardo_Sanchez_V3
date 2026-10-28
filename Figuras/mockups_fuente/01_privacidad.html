@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mockup 1 · Aviso de privacidad</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .body { padding-top: 14px; padding-bottom: 14px; }
+  .eyebrow { margin-top: 0; }
+  h1.title { margin-top: 14px; }
+  p.lead { margin-top: 12px; }
+  .check { margin-top: 18px; display: flex; align-items: flex-start; gap: 12px; }
+  .box {
+    flex: 0 0 auto; width: 26px; height: 26px; border-radius: 8px;
+    background: var(--green); display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .check span { font-size: 14.5px; line-height: 1.4; }
+  .link { margin: 10px 0 0 38px; font-size: 14.5px; font-weight: 600; color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
+  .spacer { flex: 1 1 auto; }
+  .foot { margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="status">
+    <span>18:40</span>
+    <span class="icons">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.2" width="2.8" height="3.8" rx="0.9"/><rect x="4.7" y="4.8" width="2.8" height="6.2" rx="0.9"/><rect x="9.4" y="2.4" width="2.8" height="8.6" rx="0.9"/><rect x="14.1" y="0" width="2.8" height="11" rx="0.9"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 3.6a10 10 0 0 1 14 0"/><path d="M3.6 6.3a6.4 6.4 0 0 1 8.8 0"/><path d="M6.2 9a2.8 2.8 0 0 1 3.6 0"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.7" y="0.7" width="19.6" height="10.6" rx="3" stroke="currentColor" stroke-width="1.3" opacity="0.5"/><rect x="2.4" y="2.4" width="13.5" height="7.2" rx="1.6" fill="currentColor"/><path d="M22 4.2v3.6a2 2 0 0 0 0-3.6z" fill="currentColor" opacity="0.5"/></svg>
+    </span>
+  </div>
+
+  <div class="progress"><i class="on"></i><i></i><i></i></div>
+
+  <div class="body">
+    <div class="eyebrow">Antes de comenzar</div>
+    <h1 class="title">Tu privacidad,<br>primero.</h1>
+    <p class="lead">ElderGuard no crea cuentas ni guarda tus datos en la nube.</p>
+
+    <div class="soft" style="margin-top:16px">
+      <div class="head">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.2 4.8 6v5.4c0 4.4 3 8.1 7.2 9.4 4.2-1.3 7.2-5 7.2-9.4V6L12 3.2z"/><path d="m8.9 12.1 2.2 2.2 4-4.3" stroke-linecap="round"/></svg>
+        Privacidad local
+      </div>
+      <p>Las imágenes se procesan y permanecen en el dispositivo de cuidado. Solo se envían alertas de caída a tu móvil.</p>
+    </div>
+
+    <div class="check">
+      <div class="box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+      </div>
+      <span>He leído y acepto el aviso de privacidad</span>
+    </div>
+    <div class="link">Ver aviso completo</div>
+
+    <div class="spacer"></div>
+
+    <div class="btn dark">Aceptar y continuar</div>
+    <p class="note foot">Puedes revocar tu consentimiento en<br>cualquier momento desde Ajustes.</p>
+  </div>
+</div>
+</body>
+</html>

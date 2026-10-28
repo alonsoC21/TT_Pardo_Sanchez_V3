@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Mockup 4 · Panel de estado</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .top { height: 52px; padding: 6px 22px 0; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-size: 19px; font-weight: 700; letter-spacing: -0.03em; }
+  .brand span { color: var(--green); }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 50%; background: #F0EDE6;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .section-head { margin-top: 18px; display: flex; align-items: center; justify-content: space-between; }
+  .section-head h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+  .section-head .see { font-size: 12.5px; font-weight: 600; color: var(--green); }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-soft); color: var(--green);
+    font-size: 11.5px; font-weight: 650; padding: 5px 10px; border-radius: 999px;
+  }
+  .pill i { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: block; }
+  .device {
+    margin-top: 12px; padding: 14px; border-radius: 22px; background: #FFFFFF;
+    border: 1px solid var(--line); display: flex; align-items: center; gap: 13px;
+  }
+  .avatar {
+    width: 46px; height: 46px; border-radius: 15px; background: #F2EFE7;
+    display: flex; align-items: center; justify-content: center; color: #6E6A64;
+  }
+  .device .who { flex: 1 1 auto; }
+  .device .who b { display: block; font-size: 16px; font-weight: 650; letter-spacing: -0.01em; }
+  .device .who em { font-style: normal; font-size: 12.5px; color: var(--muted); }
+  .state { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--green); }
+  .state i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: block; }
+  .spacer { flex: 1 1 auto; }
+  .tip { margin-top: 14px; font-size: 12.5px; color: #8A857E; text-align: center; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="status">
+    <span>10:24</span>
+    <span class="icons">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.2" width="2.8" height="3.8" rx="0.9"/><rect x="4.7" y="4.8" width="2.8" height="6.2" rx="0.9"/><rect x="9.4" y="2.4" width="2.8" height="8.6" rx="0.9"/><rect x="14.1" y="0" width="2.8" height="11" rx="0.9"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1 3.6a10 10 0 0 1 14 0"/><path d="M3.6 6.3a6.4 6.4 0 0 1 8.8 0"/><path d="M6.2 9a2.8 2.8 0 0 1 3.6 0"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.7" y="0.7" width="19.6" height="10.6" rx="3" stroke="currentColor" stroke-width="1.3" opacity="0.5"/><rect x="2.4" y="2.4" width="13.5" height="7.2" rx="1.6" fill="currentColor"/><path d="M22 4.2v3.6a2 2 0 0 0 0-3.6z" fill="currentColor" opacity="0.5"/></svg>
+    </span>
+  </div>
+
+  <div class="top">
+    <div class="brand">Elder<span>Guard</span></div>
+    <div class="icon-btn">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#57534D" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10"/><path d="M18 7h2"/><path d="M4 17h4"/><path d="M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="section-head">
+      <h2>Dispositivos conectados</h2>
+      <span class="pill"><i></i>1 activo</span>
+    </div>
+
+    <div class="device">
+      <div class="avatar">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 19.6a7.2 7.2 0 0 1 14 0"/></svg>
+      </div>
+      <div class="who">
+        <b>Abuelo José</b>
+        <em>EG-014</em>
+      </div>
+      <div class="state"><i></i>Conectado</div>
+    </div>
+
+    <div class="soft" style="margin-top:14px">
+      <div class="head">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.2 4.8 6v5.4c0 4.4 3 8.1 7.2 9.4 4.2-1.3 7.2-5 7.2-9.4V6L12 3.2z"/><path d="m8.9 12.1 2.2 2.2 4-4.3" stroke-linecap="round"/></svg>
+        Privacidad local
+      </div>
+      <p>Sin transmisión de video. Solo recibes alertas de caída.</p>
+    </div>
+
+    <div class="section-head" style="margin-top:26px">
+      <h2>Última actividad</h2>
+      <span class="see">Ver historial</span>
+    </div>
+
+    <div class="device" style="margin-top:10px">
+      <div class="avatar" style="background:#FBEDEA; color:#B4554C">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.6V12"/><circle cx="12" cy="16.2" r="1.1" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <div class="who">
+        <b style="font-size:14.5px">Alerta de caída resuelta</b>
+        <em>Hoy, 10:18 · Falsa alarma</em>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <p class="tip" style="padding-bottom:10px">El estado se actualiza al instante desde la placa Edge.</p>
+  </div>
+
+  <div class="nav">
+    <div class="item on">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.4S4.2 15.9 4.2 10.6A4.4 4.4 0 0 1 12 7.6a4.4 4.4 0 0 1 7.8 3c0 5.3-7.8 9.8-7.8 9.8z"/></svg>
+      Inicio
+    </div>
+    <div class="item">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5.5v13"/><path d="M5.5 12h13"/></svg>
+      Agregar
+    </div>
+    <div class="item">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 12a8.4 8.4 0 1 0 2.6-6.1"/><path d="M3.6 4.6V9h4.4"/><path d="M12 8.2V12l2.8 1.8"/></svg>
+      Historial
+    </div>
+  </div>
+  <span class="homebar"></span>
+</div>
+</body>
+</html>
