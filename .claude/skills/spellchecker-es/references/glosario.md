@@ -206,3 +206,16 @@ Reglas para editar esta lista:
 - Hole
 - Punching
 - Isolation
+- Always-on
+- Always
+- Tailscale
+- heartbeat
+- cooldown
+- keepalive
+- gradient
+- boosting
+- Perceptrón
+- sobreajuste
+- sobreajustarse
+- der
+- mAP
