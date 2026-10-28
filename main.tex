@@ -242,7 +242,7 @@ Falls are one of the leading causes of injury and death among older adults, and 
 \label{cap:generalidades}
 
 \section{Introducción}
-En la actualidad, la población de adultos mayores es partícipe de un cambio demográfico significativo; se estima que para el año 2050 la población de 65 años alcanzará los 1,500 millones \parencite{nahian2026ai}. Por lo que preservar su bienestar y calidad de vida ha sido un tema que ha cobrado mayor importancia. En México, se han creado diversos programas, créditos y apoyos con este propósito \parencite{inapam2015alerta}; sin embargo, no cubren uno de los principales peligros que corre este sector de la población, los accidentes.
+En la actualidad, la población de adultos mayores es partícipe de un cambio demográfico significativo; se estima que para el año 2050 la población de 65 años o más alcanzará los 1,500 millones \parencite{nahian2026ai}. Por lo que preservar su bienestar y calidad de vida ha sido un tema que ha cobrado mayor importancia. En México, se han creado diversos programas, créditos y apoyos con este propósito \parencite{inapam2015alerta}; sin embargo, no cubren uno de los principales peligros que corre este sector de la población, los accidentes.
 
 El sector de la población de adultos mayores es altamente vulnerable a caídas accidentales: a nivel mundial, entre el 28\% y el 35\% de las personas mayores de 65 años sufren al menos una caída al año \parencite{who2008falls}, y las caídas representan la segunda causa mundial de muerte por traumatismos involuntarios \parencite{who2021caidas}.
 
@@ -257,7 +257,7 @@ Las caídas son uno de los principales riesgos para la salud de las personas adu
  
 La gravedad de estas consecuencias depende en buena medida del tiempo que transcurre entre la caída y la llegada de ayuda. Este tiempo crece cuando la persona vive sola o pasa periodos prolongados sin supervisión, situación que además se asocia con un mayor riesgo de caer \parencite{who2008falls}. En un hogar unipersonal, si el adulto mayor queda inconsciente, lesionado o simplemente no puede incorporarse, puede permanecer en el suelo hasta que alguien note su ausencia.
  
-Las soluciones disponibles no resuelven este problema por completo. Los botones de pánico y los dispositivos portables con acelerómetro dependen de que el usuario los lleve puestos, los mantenga cargados y, en el caso de los botones, de que esté consciente para activarlos \parencite{igual2013challenges}. Los sistemas basados en visión artificial no requieren la colaboración del usuario, pero enfrentan tres retos: la privacidad, porque implican colocar cámaras dentro de la vivienda; las falsas alarmas, porque actividades cotidianas como sentarse o acostarse con rapidez producen movimientos parecidos a una caída; y el costo de cómputo, porque los modelos de aprendizaje profundo suelen requerir hardware potente o servidores en la nube \parencite{alam2022review}. Asimismo, la mayoría de los trabajos reportados se evalúan fuera de línea con caídas simuladas y no llegan a integrarse en un sistema que notifique a un cuidador \parencite{igual2013challenges,alam2022review}.
+Las soluciones disponibles no resuelven este problema por completo. Los botones de pánico y los dispositivos portables con acelerómetro dependen de que el usuario los lleve puestos, los mantenga cargados y, en el caso de los botones, de que esté consciente para activarlos \parencite{igual2013challenges}. Los sistemas basados en visión artificial no requieren la colaboración del usuario, pero enfrentan tres retos: la privacidad, porque implican colocar cámaras dentro de la vivienda; las falsas alarmas, porque actividades cotidianas como sentarse o acostarse con rapidez producen movimientos parecidos a una caída; y el costo de cómputo, porque los modelos de aprendizaje profundo suelen requerir hardware potente o servidores en la nube \parencite{alam2022review}. Asimismo, la mayoría de los trabajos reportados se evalúan fuera de línea con caídas simuladas y no llegan a integrarse en un sistema que notifique a un tutor \parencite{igual2013challenges,alam2022review}.
  
 Por lo anterior, se identifica la necesidad de un sistema que detecte caídas de forma automática, sin depender de que el adulto mayor porte o active algún dispositivo; que procese el video localmente para no exponer imágenes de la vivienda; que distinga una caída de las actividades de la vida diaria con una tasa baja de falsas alarmas; y que notifique de inmediato a un tutor para que pueda verificar la situación y actuar.
  
@@ -277,8 +277,7 @@ Finalmente, la implementación de este Trabajo Terminal prescinde de costosos se
 
 \section{Objetivos}
 \subsection{Objetivo general}
-Desarrollar un prototipo de sistema inteligente para la detección de caídas en adultos mayores, utilizando visión artificial basada en el análisis de esqueletos mediante cámara RGB y una plataforma de notificación móvil para contactos
-de emergencia.
+Desarrollar un prototipo de sistema inteligente para la detección de caídas en adultos mayores, utilizando visión artificial basada en el análisis de esqueletos mediante cámara RGB y una plataforma de notificación móvil para el tutor.
 
 \subsection{Objetivos específicos}
 \begin{enumerate}
@@ -288,9 +287,9 @@ de emergencia.
  
     \item Entrenar un modelo de inteligencia artificial capaz de clasificar con precisión entre una caída real y actividades cotidianas (sentarse, caminar, acostarse) basándose en la secuencia de posturas del esqueleto.
  
-    \item Desarrollar una aplicación móvil Android que reciba alertas ante una caída, permitiendo al contacto de emergencia visualizar el estado del evento.
+    \item Desarrollar una aplicación móvil Android que reciba alertas ante una caída, permitiendo al tutor visualizar el estado del evento.
 
-    \item Evaluar el rendimiento del sistema utilizando las métricas de precisión, sensibilidad, especificidad y exactitud, validando el prototipo con conjuntos de datos públicos; de esta forma, el desempeño del sistema será evaluado para verificar su fiabilidad al discriminar verdaderas caídas frente a actividades de la vida diaria.
+    \item Evaluar el rendimiento del sistema utilizando las métricas de precisión, sensibilidad, especificidad y exactitud, validando el prototipo con conjuntos de datos públicos y grabaciones propias; de esta forma, el desempeño del sistema será evaluado para verificar su fiabilidad al discriminar verdaderas caídas frente a actividades de la vida diaria.
 \end{enumerate}
 
 \section{Alcances y limitaciones}
@@ -299,10 +298,10 @@ de emergencia.
 \subsection{Alcances}
 \begin{itemize}
   \item Se desarrollará un \textbf{prototipo funcional}, no un producto comercial, que integre la captura de video, la detección de caídas y la notificación al tutor.
-  \item El sistema utilizará \textbf{una cámara RGB} conectada a una \textbf{placa Edge basada en Raspberry Pi 5}, donde se ejecutarán la estimación de pose con YOLO26 \citep{sapkota2025yolo26} el clasificador de posturas y el análisis temporal de la secuencia de posturas.
+  \item El sistema utilizará \textbf{una cámara RGB} conectada a una \textbf{placa Edge basada en Raspberry Pi 5}, donde se ejecutarán la estimación de pose con YOLO26 \citep{sapkota2025yolo26}, el clasificador de posturas y el análisis temporal de la secuencia de posturas.
   \item El sistema está pensado para \textbf{una persona en una habitación interior} con iluminación artificial o natural suficiente.
   \item El clasificador reconocerá en cada cuadro cuatro posturas: \textbf{de pie}, \textbf{sentado}, \textbf{acostado} y \textbf{caído}; a partir de su secuencia, el sistema decidirá si ocurrió una \textbf{caída} o una actividad cotidiana, considerando caminar, sentarse, acostarse y agacharse.
-  \item El modelo se entrenará y validará con \textbf{conjuntos de datos públicos} de caídas y actividades de la vida diaria, complementados con un conjunto de validación capturado por el equipo en condiciones controladas.
+  \item El clasificador se entrenará con \textbf{conjuntos de datos públicos} de posturas, y el sistema se evaluará con secuencias de video públicas y con \textbf{grabaciones propias} de caídas simuladas y actividades de la vida diaria, capturadas por el equipo en condiciones controladas.
   \item Ante una caída, la placa publicará una alerta mediante \textbf{MQTT} y una \textbf{aplicación Android} notificará al tutor, quien podrá confirmar o descartar el evento.
   \item El desempeño se evaluará con sensibilidad, especificidad, precisión y exactitud, además de la tasa de procesamiento en la placa y el tiempo de extremo a extremo, conforme a los criterios de éxito de la Sección~\ref{sec:criterios-exito}.
 \end{itemize}
@@ -334,7 +333,7 @@ A continuación se describen los trabajos más cercanos a la propuesta.
 
 \paragraph{Kwolek y Kepski (2014).} Presentaron un sistema que corre sobre una plataforma embebida (PandaBoard ES, procesador ARM de doble núcleo) y combina mapas de profundidad de un sensor Kinect con un acelerómetro portable \parencite{kwolek2014human}. Con este trabajo publicaron el \textit{UR Fall Detection Dataset}, con 30 secuencias de caídas y 30 de actividades de la vida diaria. Usando únicamente profundidad, su clasificador SVM obtuvo 90\,\% de exactitud y 80\,\% de especificidad; al añadir el acelerómetro alcanzó 98.33\,\% de exactitud. El trabajo muestra que la detección en el borde es viable, pero también que, sin sensores portables, la especificidad es el punto débil.
 
-\paragraph{Martínez-Villaseñor et al. (2019).} Investigadores de la Universidad Panamericana, en la Ciudad de México, publicaron el \textit{UP-Fall Detection Dataset}, un conjunto multimodal con 17 participantes, cinco tipos de caída y seis actividades cotidianas (caminar, estar de pie, sentarse, recoger un objeto, saltar y acostarse), registrados con sensores inerciales, infrarrojos, electroencefalografía y dos cámaras \parencite{martinez2019upfall}. Es un referente nacional y una fuente pública de video etiquetado que puede utilizarse para entrenar clasificadores por trayectoria.
+\paragraph{Martínez-Villaseñor et al. (2019).} Investigadores de la Universidad Panamericana, en la Ciudad de México, publicaron el \textit{UP-Fall Detection Dataset}, un conjunto multimodal con 17 participantes, cinco tipos de caída y seis actividades cotidianas (caminar, estar de pie, sentarse, recoger un objeto, saltar y acostarse), registrados con sensores inerciales, infrarrojos, electroencefalografía y dos cámaras \parencite{martinez2019upfall}. Es un referente nacional y una fuente pública de video etiquetado que puede utilizarse para evaluar sistemas de detección de caídas a partir de secuencias de video.
 
 \paragraph{Lin et al. (2021).} Propusieron un esquema en dos etapas: extraer el esqueleto con OpenPose y clasificar la secuencia de esqueletos con redes recurrentes LSTM y GRU \parencite{lin2021openpose}. El trabajo es un antecedente directo de la arquitectura que se plantea en este proyecto, aunque OpenPose es un modelo pesado para ejecutarse en tiempo real sobre hardware embebido.
 
@@ -353,7 +352,7 @@ La Tabla~\ref{tab:estado-arte} resume los trabajos revisados y los compara con l
 \toprule
 \textbf{Trabajo} & \textbf{Sensores} & \textbf{Método} & \textbf{Ejecución / alerta} \\
 \midrule
-\textcite{kwolek2014human} & Profundidad (Kinect) + acelerómetro & Umbrales + SVM & Plataforma embebida; sin aplicación para cuidador \\
+\textcite{kwolek2014human} & Profundidad (Kinect) + acelerómetro & Umbrales + SVM & Plataforma embebida; sin aplicación para el tutor \\
 \addlinespace
 \textcite{martinez2019upfall} & Inerciales, infrarrojo, EEG y dos cámaras & RF, SVM, MLP, kNN & Conjunto de datos; no es un sistema desplegado \\
 \addlinespace
@@ -379,7 +378,7 @@ Se eligió CRISP-ML(Q) porque el componente central del sistema es un modelo de 
 
 CRISP-ML(Q) consta de seis fases. La Tabla~\ref{tab:fases-crisp} muestra cómo se aplica cada una al proyecto.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Fases de CRISP-ML(Q) aplicadas al proyecto.}
 \label{tab:fases-crisp}
@@ -394,7 +393,7 @@ CRISP-ML(Q) consta de seis fases. La Tabla~\ref{tab:fases-crisp} muestra cómo s
 \addlinespace
 3. Ingeniería del modelo & Estimación de pose y extracción de esqueletos; entrenamiento del clasificador de posturas y ajuste de la regla temporal; configuración de la Raspberry Pi 5 y medición de modelos candidatos en el hardware; conversión a formato ligero. & Oct -- nov 2026 (TT1); ene -- mar 2027 (TT2) \\
 \addlinespace
-4. Evaluación & Cálculo de sensibilidad, especificidad, precisión y exactitud; pruebas de integración de extremo a extremo (latencia, MQTT, entrega de alertas) contra los criterios de éxito de la fase 1. & Abr -- may 2027 \\
+4. Evaluación & Evaluación del clasificador de posturas con imágenes (matriz de confusión y F1) y del sistema completo con secuencias de video: cálculo de sensibilidad, especificidad, precisión y exactitud; pruebas de integración de extremo a extremo (latencia, MQTT, entrega de alertas) contra los criterios de éxito de la fase 1. & Abr -- may 2027 \\
 \addlinespace
 5. Despliegue & Aplicación móvil, broker MQTT, notificaciones y scripts que convierten la inferencia en alerta al tutor. & Feb -- abr 2027 \\
 \addlinespace
@@ -403,7 +402,7 @@ CRISP-ML(Q) consta de seis fases. La Tabla~\ref{tab:fases-crisp} muestra cómo s
 \end{tabular}
 \end{table}
 
-\paragraph{Aseguramiento de la calidad.} Siguiendo el enfoque de CRISP-ML(Q), al cierre de cada fase se verifica que sus entregables cumplan lo necesario para la siguiente y se registran los riesgos detectados. Los principales riesgos identificados desde la fase 1 son: (1) que el modelo no alcance las métricas objetivo con caídas reales, dado que los datos públicos contienen caídas simuladas; (2) que el modelo no alcance la tasa de cuadros requerida en la Raspberry Pi 5; y (3) que las falsas alarmas reduzcan la confianza del tutor en el sistema. Estos riesgos se atienden, respectivamente, con un conjunto de validación capturado en condiciones reales, con la medición temprana de modelos candidatos en el hardware y con el análisis de las alertas descartadas en la fase 6.
+\paragraph{Aseguramiento de la calidad.} Siguiendo el enfoque de CRISP-ML(Q), al cierre de cada fase se verifica que sus entregables cumplan lo necesario para la siguiente y se registran los riesgos detectados. Los principales riesgos identificados desde la fase 1 son: (1) que el modelo no alcance las métricas objetivo con caídas reales, dado que los datos públicos contienen caídas simuladas; (2) que el modelo no alcance la tasa de cuadros requerida en la Raspberry Pi 5; y (3) que las falsas alarmas reduzcan la confianza del tutor en el sistema. Estos riesgos se atienden, respectivamente, con grabaciones propias de caídas simuladas y actividades cotidianas, con la medición temprana de modelos candidatos en el hardware y con el análisis de las alertas descartadas en la fase 6.
 
 \paragraph{Iteración.} Como lo plantea el modelo, las fases no son estrictamente secuenciales: si en la evaluación no se alcanzan los criterios de éxito, se regresa a la preparación de los datos o a la ingeniería del modelo antes de continuar con el despliegue.
 
@@ -439,7 +438,7 @@ La aplicación móvil se concibe como un apoyo suplementario para el cuidado y n
 
 \subsection{Consentimiento informado y ética de la investigación}
 
-La instalación del sistema requiere el consentimiento informado de la persona adulta mayor y del tutor, quienes deben conocer que se colocará una cámara en la vivienda, que el video se procesa y se descarta en el dispositivo, qué datos se transmiten al teléfono y cómo revocar la autorización. La aplicación presenta ese aviso en el registro de la cuenta (Figura~\ref{fig:mockup1}) y condiciona la vinculación del dispositivo a su aceptación. En el plano de la investigación no se registran caídas reales de adultos mayores: el entrenamiento y la validación emplean conjuntos públicos y caídas simuladas por voluntarios que otorgan su consentimiento, de modo que el prototipo no se prueba con pacientes ni en entornos hospitalarios y no emite diagnósticos (Sección~\ref{sec:alcances}).
+La instalación del sistema requiere el consentimiento informado de la persona adulta mayor y del tutor, quienes deben conocer que se colocará una cámara en la vivienda, que el video se procesa y se descarta en el dispositivo, qué datos se transmiten al teléfono y cómo revocar la autorización. La aplicación presenta ese aviso en el registro de la cuenta (Figura~\ref{fig:mockup1}) y condiciona la vinculación del dispositivo a su aceptación. En el plano de la investigación no se registran caídas reales de adultos mayores: el entrenamiento y la validación emplean conjuntos públicos y caídas simuladas por voluntarios que otorgan su consentimiento, de modo que el prototipo no se prueba con pacientes ni en entornos hospitalarios y no emite diagnósticos (Sección~\ref{sec:alcances}). A diferencia de lo que ocurre durante la operación del prototipo, estas grabaciones sí se almacenan: se conservan cifradas, solo el equipo tiene acceso a ellas, se utilizan exclusivamente para este trabajo y se eliminan al concluirlo.
 
 % ============================================================
 \chapter{Marco teórico}
@@ -500,10 +499,19 @@ Este enfoque descompone el problema en dos tareas más simples. El clasificador 
  
 Una alternativa es clasificar directamente secuencias de puntos clave con redes neuronales recurrentes. Las redes LSTM (\textit{Long Short-Term Memory}) añaden compuertas que controlan qué información se guarda, se olvida o se emite, lo que les permite aprender dependencias a lo largo de muchos pasos de tiempo \parencite{hochreiter1997lstm}, y se han usado con buenos resultados para detectar caídas a partir de esqueletos \parencite{lin2021openpose,mobasheri2022fall}. Sin embargo, requieren video etiquetado cuadro a cuadro y un mayor costo de cómputo, por lo que en este trabajo se adopta el análisis de la secuencia de posturas y se reserva el uso de modelos recurrentes como posible mejora.
 
+\section{Clasificadores para datos tabulares}
+\label{sec:clasificadores}
+
+El clasificador de posturas recibe, por cada cuadro, un vector pequeño de valores numéricos que describe la geometría del esqueleto. Este tipo de entrada se conoce como datos tabulares: cada ejemplo es una fila y cada característica, una columna. Para este tipo de datos se consideran dos familias de modelos.
+
+\paragraph{Árboles de decisión con \textit{gradient boosting}.} Un árbol de decisión clasifica un ejemplo mediante una serie de preguntas sobre sus características, por ejemplo, si la inclinación del tronco supera cierto ángulo; los umbrales de cada pregunta se aprenden a partir de los datos de entrenamiento. Un solo árbol tiende a equivocarse con facilidad, por lo que los métodos de \textit{gradient boosting} entrenan una secuencia de árboles pequeños en la que cada uno corrige los errores de los anteriores, y la predicción final combina las respuestas de todos. XGBoost es una implementación eficiente de este método que, además, admite valores faltantes de forma nativa \parencite{chen2016xgboost}. Estos modelos suelen obtener buenos resultados con conjuntos de datos pequeños y permiten conocer qué características influyen más en la decisión.
+
+\paragraph{Perceptrón multicapa.} Un perceptrón multicapa (MLP) es una red neuronal formada por una capa de entrada, una o más capas ocultas y una capa de salida \parencite{goodfellow2016deep}. Cada neurona calcula una suma ponderada de sus entradas y le aplica una función de activación no lineal, de modo que las capas sucesivas combinan las características en patrones cada vez más complejos. La capa de salida entrega la probabilidad de cada postura, y los pesos se ajustan durante el entrenamiento mediante descenso por gradiente y retropropagación. Un MLP pequeño se ejecuta con rapidez en hardware limitado, aunque con pocos datos tiende a sobreajustarse si no se regulariza.
+
 \section{Métricas de evaluación}
 \label{sec:metricas}
 
-La decisión final del sistema es binaria: para cada secuencia de posturas analizada determina si ocurrió una caída (clase positiva) o no (clase negativa). Al comparar sus predicciones con las etiquetas reales se obtienen cuatro cantidades, que se organizan en la matriz de confusión (Tabla~\ref{tab:matriz-confusion}):
+El desempeño se evalúa en dos niveles. En el nivel del sistema, la decisión es binaria: para cada secuencia de posturas analizada, que corresponde a un evento, se determina si ocurrió una caída (clase positiva) o no (clase negativa). Una caída se cuenta como detectada si la alerta se emite dentro del tiempo máximo del criterio CE-06 a partir del inicio de la caída, y cualquier alerta emitida en una secuencia sin caída se cuenta como falsa alarma. Al comparar sus predicciones con las etiquetas reales se obtienen cuatro cantidades, que se organizan en la matriz de confusión (Tabla~\ref{tab:matriz-confusion}):
 
 \begin{itemize}
   \item \textbf{Verdaderos positivos (VP):} caídas detectadas correctamente.
@@ -538,6 +546,13 @@ A partir de ellas se definen las cuatro métricas que se usan en este trabajo \p
 
 La \textbf{sensibilidad} (o \textit{recall}) indica qué proporción de las caídas reales se detectó; es la métrica más importante para la seguridad del adulto mayor, porque cada falso negativo es una caída sin atender. La \textbf{especificidad} indica qué proporción de las actividades normales se reconoció como tal; una especificidad baja produce falsas alarmas que, con el tiempo, hacen que el tutor deje de confiar en el sistema. La \textbf{precisión} indica qué proporción de las alertas emitidas corresponde a caídas reales. Finalmente, la \textbf{exactitud} resume el desempeño global, pero puede ser engañosa cuando las clases están desbalanceadas, como ocurre en la práctica, donde las caídas son mucho menos frecuentes que las actividades cotidianas \parencite{sokolova2009systematic}. Por ello se reportan las cuatro métricas y no solo la exactitud.
 
+En el nivel del clasificador de posturas, que asigna a cada cuadro una de cuatro clases, los resultados se organizan en una matriz de confusión de $4 \times 4$, en la que cada fila corresponde a la postura real y cada columna a la postura predicha. Para cada postura se calculan su precisión y su sensibilidad tratándola como clase positiva frente a las demás, y se combinan en la medida F1 \parencite{sokolova2009systematic}:
+\begin{equation}
+F1 = \frac{2 \cdot \text{Precisión} \cdot \text{Sensibilidad}}{\text{Precisión} + \text{Sensibilidad}}
+\label{eq:f1}
+\end{equation}
+Se reporta el F1 de cada postura y su promedio simple (F1 macro), que da el mismo peso a todas las posturas aunque alguna tenga menos ejemplos.
+
 \section{Cómputo en el borde}
 \label{sec:edge}
 
@@ -550,7 +565,7 @@ El Internet de las Cosas (IoT, por sus siglas en inglés) interconecta objetos c
 Para lograr una comunicación altamente reactiva entre la placa de procesamiento perimetral y el usuario final, se emplea MQTT (\textit{Message Queuing Telemetry Transport}). MQTT es un protocolo de mensajería ligero, diseñado para redes con recursos limitados o fluctuaciones de conexión, operando bajo un modelo ágil de publicación y suscripción (\textit{publish/subscribe}) \parencite{mqtt2026estandar}. Un servidor centralizado (\textit{broker}, como Mosquitto) gestiona la entrega de información organizada por jerarquías de tópicos, garantizando que el evento de caída detectado se transmita de forma confiable, con la urgencia y eficiencia que requieren los despliegues IoT domésticos \parencite{mqtt2026estandar}.
 
 \section{Desarrollo de aplicaciones móviles Android}
-Android es el sistema operativo móvil predominante basado en código abierto, cuyas capacidades nativas permiten un manejo robusto de procesos y eventos en segundo plano \parencite{uv2026desarrollo}. Al desarrollar la aplicación del tutor de forma nativa, el dispositivo móvil puede mantener un canal de suscripción persistente al \textit{broker} MQTT \parencite{mqtt2026estandar}. Esto asegura que en el instante exacto en que el sistema de visión clasifica un accidente, la aplicación despierte, intercepte el flujo de red y dispare inmediatamente las notificaciones de emergencia visuales y sonoras en la interfaz de usuario, optimizando radicalmente el tiempo de respuesta del cuidador \parencite{uv2026desarrollo}.
+Android es el sistema operativo móvil predominante basado en código abierto, cuyas capacidades nativas permiten un manejo robusto de procesos y eventos en segundo plano \parencite{uv2026desarrollo}. Al desarrollar la aplicación del tutor de forma nativa, el dispositivo móvil puede mantener un canal de suscripción persistente al \textit{broker} MQTT \parencite{mqtt2026estandar}. Esto asegura que en el instante exacto en que el sistema de visión clasifica un accidente, la aplicación despierte, intercepte el flujo de red y dispare inmediatamente las notificaciones de emergencia visuales y sonoras en la interfaz de usuario, optimizando radicalmente el tiempo de respuesta del tutor \parencite{uv2026desarrollo}.
 
 % ============================================================
 \chapter{Análisis del sistema}
@@ -615,7 +630,7 @@ El flujo operativo principal obedece a un esquema transaccional de máquina a us
     \item \textbf{Suministro ininterrumpido de video:} La cámara RGB (Capa de Percepción) alimenta la memoria RAM con el entorno óptico actual.
     \item \textbf{Extracción y clasificación en el Borde:} Como un evento incluido (\textit{include}), la placa procesadora extrae asíncronamente los nodos del esqueleto de cada cuadro y somete la sucesión de posturas a evaluación temporal.
     \item \textbf{Publicación autónoma de alertas:} Frente a un evento anómalo de caída (\textit{extend}), el microordenador actúa como cliente publicador para emitir un objeto JSON a un tópico dedicado (ej. \texttt{alertas/caidas}) a través del \textit{broker} Mosquitto.
-    \item \textbf{Recepción y notificación móvil:} La aplicación Android del contacto de emergencia actúa como cliente permanente (\textit{suscriptor}), que recibe asíncronamente las alertas y desencadena un protocolo sonoro de emergencia en pantalla.
+    \item \textbf{Recepción y notificación móvil:} La aplicación Android del tutor actúa como cliente permanente (\textit{suscriptor}), que recibe asíncronamente las alertas y desencadena un protocolo sonoro de emergencia en pantalla.
 \end{itemize}
 \begin{sidewaysfigure}
     \centering
@@ -655,7 +670,7 @@ RF-IA-05 & El módulo debe distinguir una caída de actividades cotidianas simil
 \addlinespace
 RF-IA-06 & Al detectar una caída, el módulo debe entregar el evento (marca de tiempo y probabilidad) al componente de alertas en el formato acordado con el subsistema IoT. & Alta \\
 \addlinespace
-RF-IA-07 & El módulo debe descartar los cuadros en los que la confianza promedio de los puntos clave sea menor a un umbral, para no clasificar esqueletos incompletos. & Media \\
+RF-IA-07 & El módulo debe marcar como faltantes los puntos clave con confianza baja y descartar únicamente los cuadros en los que no se detecten al menos un hombro y una cadera, para clasificar también a personas parcialmente ocultas. & Media \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -673,7 +688,7 @@ RF-IA-07 & El módulo debe descartar los cuadros en los que la confianza promedi
 \midrule
 RNF-IA-01 & Desempeño & El procesamiento completo (estimación de pose + clasificación) debe ejecutarse en la placa Edge a una tasa no menor a la fijada en los criterios de éxito (Tabla~\ref{tab:criterios-exito}). \\
 \addlinespace
-RNF-IA-02 & Portabilidad & El modelo debe poder exportarse a un formato ligero compatible con la placa Edge (por ejemplo, ONNX o TFLite), con precisión reducida (FP16 o INT8) si el hardware lo requiere. \\
+RNF-IA-02 & Portabilidad & El modelo debe poder exportarse a un formato ligero compatible con la Raspberry Pi 5 (por ejemplo, NCNN u ONNX), con precisión reducida (FP16 o INT8) si el hardware lo requiere. \\
 \addlinespace
 RNF-IA-03 & Eficiencia & El modelo debe caber en la memoria disponible de la placa sin impedir la ejecución del cliente MQTT y del sistema operativo. \\
 \addlinespace
@@ -691,7 +706,7 @@ RNF-IA-06 & Trazabilidad & Cada experimento de entrenamiento debe registrar dato
 \begin{itemize}
   \item Se utiliza una sola cámara RGB convencional; no se emplean sensores de profundidad ni dispositivos portables.
   \item El sistema está pensado para un adulto mayor en una habitación; escenas con varias personas quedan fuera del alcance.
-  \item Por la dificultad ética de obtener caídas reales de adultos mayores, el entrenamiento se basa en conjuntos de datos públicos con caídas simuladas \parencite{igual2013challenges,alam2022review}; esta limitación se mitiga con un conjunto de validación capturado en condiciones reales.
+  \item Por la dificultad ética de obtener caídas reales de adultos mayores, el entrenamiento se basa en conjuntos de datos públicos con caídas simuladas \parencite{igual2013challenges,alam2022review}; esta limitación se mitiga evaluando el sistema con grabaciones capturadas por el equipo en condiciones controladas.
   \item La capacidad de cómputo y la memoria están limitadas por la placa Edge seleccionada, la Raspberry Pi 5, por lo que se priorizan las variantes compactas de YOLO26-pose \parencite{sapkota2025yolo26}.
 \end{itemize}
 
@@ -941,7 +956,7 @@ El módulo de inteligencia artificial funciona en dos etapas: un clasificador qu
  
 \subsection{Conjunto de datos}
  
-Como base se utiliza el \textit{Fall Detection Dataset} publicado en Kaggle \parencite{kandagatla2022fall}, que contiene 485 imágenes RGB, divididas en 374 para entrenamiento y 111 para validación. Cada imagen incluye la caja delimitadora de la persona y su etiqueta, en una de tres clases: \textit{Fall Detected}, \textit{Walking} y \textit{Sitting}. Se eligió porque es de acceso público y sus etiquetas corresponden directamente a posturas del cuerpo, lo que permite usarlo como punto de partida para el clasificador.
+Como base se utiliza el \textit{Fall Detection Dataset} publicado en Kaggle \parencite{kandagatla2022fall}, que contiene 485 imágenes RGB, divididas en 374 para entrenamiento y 111 para validación. Cada imagen incluye la caja delimitadora de la persona y su etiqueta, en una de tres clases: \textit{Fall Detected}, \textit{Walking} y \textit{Sitting}. Este conjunto se eligió por cuatro razones. Primero, sus etiquetas describen la postura de la persona y no la actividad que realiza, por lo que corresponden directamente a las clases del clasificador; en cambio, conjuntos de video como UP-Fall \parencite{martinez2019upfall} o UR Fall \parencite{kwolek2014human} están etiquetados por actividad o por secuencia completa, y usarlos para entrenar un clasificador de posturas exigiría reetiquetar cuadro por cuadro. Segundo, está formado por imágenes individuales, que es justamente el tipo de entrada que recibe el clasificador de posturas, ya que el análisis temporal se resuelve por separado (Sección~\ref{sec:secuencias}). Tercero, cada imagen incluye la caja delimitadora de la persona etiquetada, lo que permite asociar sin ambigüedad cada esqueleto con su etiqueta. Por último, es de acceso público y su tamaño permite revisar manualmente cada imagen, lo que resulta adecuado para construir y validar el procedimiento de preprocesamiento en esta etapa del proyecto.
  
 Las etiquetas originales se asignan a las posturas que reconocerá el clasificador, como se muestra en la Tabla~\ref{tab:clases-postura}. Dado que el conjunto no incluye la postura \textit{acostado}, indispensable para distinguir una caída de una persona que se recuesta voluntariamente, y que su tamaño es reducido, el conjunto se completará con imágenes de esa clase y con ejemplos adicionales de las demás, obtenidos de otros conjuntos públicos o capturados por el equipo en condiciones controladas.
  
@@ -968,17 +983,50 @@ Las etiquetas originales se asignan a las posturas que reconocerá el clasificad
 \subsection{Preprocesamiento para el entrenamiento}
  
 Cada imagen del conjunto de datos pasa por los siguientes pasos para convertirse en un ejemplo de entrenamiento:
- 
+
 \begin{enumerate}
-  \item \textbf{Revisión de calidad.} Se descartan las imágenes en las que la persona no es visible, aparece cortada por el borde o hay más de una persona, y se eliminan imágenes duplicadas o casi idénticas.
-  \item \textbf{Estimación de pose.} Se aplica YOLO26-pose \parencite{ultralytics2026yolo26} para obtener los 17 puntos clave del esqueleto en formato COCO, cada uno con sus coordenadas $(x, y)$ y su confianza.
-  \item \textbf{Asociación con la etiqueta.} Si el modelo detecta más de una persona, se conserva el esqueleto cuya caja delimitadora coincide mejor con la caja anotada en el conjunto de datos, de modo que la etiqueta corresponda al esqueleto correcto.
-  \item \textbf{Filtrado por confianza.} Se descartan los esqueletos cuya confianza promedio sea menor a un umbral y se marcan como faltantes los puntos individuales con confianza baja, conforme al requisito RF-IA-07.
-  \item \textbf{Normalización.} Las coordenadas se trasladan para que el punto medio de las caderas quede en el origen y se dividen entre la longitud del torso (distancia entre el punto medio de los hombros y el de las caderas). Así, el esqueleto no depende de la posición de la persona en la imagen ni de su distancia a la cámara.
-  \item \textbf{Vector de características.} A las 34 coordenadas normalizadas se agregan características geométricas que ayudan a distinguir las posturas: el ángulo del tronco respecto a la vertical, la relación entre el alto y el ancho del esqueleto y la altura de la cabeza respecto a la cadera.
-  \item \textbf{División de los datos.} Se conserva la división original en entrenamiento y validación, y se reserva un conjunto de prueba independiente formado por las imágenes capturadas por el equipo, para evaluar el modelo con datos que no provienen de la misma fuente.
+  \item \textbf{Unificación y anotación del conjunto.} Las clases originales se sustituyen por las posturas de la Tabla~\ref{tab:clases-postura}. Las imágenes que se agreguen para completar el conjunto se anotan con el mismo formato, es decir, con la caja delimitadora de la persona y su postura, para que todas las imágenes sigan el mismo procedimiento.
+  \item \textbf{Revisión de calidad.} Se descartan únicamente las imágenes dañadas o en las que la persona etiquetada no se distingue, y se eliminan las imágenes duplicadas o casi idénticas antes de dividir los datos, para que una misma imagen no aparezca a la vez en entrenamiento y en validación. Las imágenes en las que la persona aparece parcialmente oculta por objetos o cortada por el borde se conservan, ya que representan situaciones probables en una vivienda, como una caída detrás de un mueble, y permiten que el clasificador aprenda a reconocer posturas con información incompleta.
+  \item \textbf{Estimación de pose.} Se aplica YOLO26-pose \parencite{ultralytics2026yolo26} para obtener los 17 puntos clave del esqueleto en formato COCO, cada uno con sus coordenadas $(x, y)$ y su confianza. Si se detecta más de una persona, se conserva el esqueleto cuya caja delimitadora se traslapa más con la caja anotada, medido con la intersección sobre la unión (IoU), de modo que la etiqueta corresponda a la persona correcta; si ninguna detección alcanza un IoU mínimo de 0.5, la imagen se descarta.
+  \item \textbf{Filtrado por confianza.} Los puntos con confianza menor a un umbral se marcan como faltantes, en lugar de descartar el esqueleto completo, para conservar los casos con oclusión parcial. Un esqueleto solo se descarta cuando no se detectan con confianza suficiente al menos un hombro y una cadera, ya que sin ellos no es posible ubicar el torso ni calcular las características, conforme al requisito RF-IA-07.
+  \item \textbf{Traslación y escalamiento.} Las coordenadas se trasladan para que el punto medio de las caderas $\mathbf{c}$ quede en el origen y se escalan dividiéndolas entre la longitud del torso $L$, es decir, la distancia entre el punto medio de los hombros $\mathbf{s}$ y el de las caderas:
+  \begin{equation}
+    \mathbf{p}'_i = \frac{\mathbf{p}_i - \mathbf{c}}{L}, \qquad L = \lVert \mathbf{s} - \mathbf{c} \rVert
+  \end{equation}
+  Si uno de los hombros o de las caderas falta, se utiliza el punto visible en lugar del punto medio. Así, el esqueleto no depende de la posición de la persona en la imagen ni de su distancia a la cámara.
+  \item \textbf{Cálculo de ángulos.} A partir del esqueleto se calculan ángulos que describen la postura. El ángulo en una articulación $B$, formado por los segmentos que la unen con los puntos $A$ y $C$, se obtiene como:
+  \begin{equation}
+    \theta_B = \arccos\left(\frac{(\mathbf{p}_A - \mathbf{p}_B)\cdot(\mathbf{p}_C - \mathbf{p}_B)}{\lVert \mathbf{p}_A - \mathbf{p}_B \rVert\,\lVert \mathbf{p}_C - \mathbf{p}_B \rVert}\right)
+  \end{equation}
+  Los ángulos no cambian con la posición, el tamaño ni la distancia de la persona, y dependen menos de la ubicación de la cámara que las coordenadas, lo que los hace más robustos ante las diferencias entre el conjunto de datos y las imágenes capturadas en la vivienda. Se calculan para ambos lados del cuerpo; si falta un punto de un lado, se usa el valor del lado opuesto, y si faltan ambos, el ángulo se marca como faltante.
+  \item \textbf{Vector de características.} Cada esqueleto se representa con los nueve valores de la Tabla~\ref{tab:caracteristicas}: siete ángulos y dos medidas geométricas. Las coordenadas se utilizan únicamente para calcular estos valores y no forman parte del vector, lo que reduce el número de entradas, disminuye el riesgo de sobreajuste con un conjunto de datos pequeño y facilita interpretar las decisiones del clasificador.
+  \item \textbf{División de los datos.} Se conserva la división original en entrenamiento y validación, y las imágenes agregadas se reparten en la misma proporción por postura. Se reserva además un conjunto de prueba independiente, formado por imágenes capturadas por el equipo en sesiones y con personas distintas a las usadas para completar el conjunto, para evaluar el clasificador con datos que no provienen de la misma fuente. Para evaluar el sistema completo se emplean secuencias de video: grabaciones propias de caídas simuladas y de actividades cotidianas, registradas con la misma cámara y placa a la tasa de operación y anotadas con el tipo de evento y el instante de inicio de la caída, complementadas con las secuencias de UP-Fall \parencite{martinez2019upfall} y UR Fall \parencite{kwolek2014human}. Las secuencias se dividen en un grupo de ajuste, con el que se eligen los parámetros de la regla temporal, y un grupo de prueba, reservado para el cálculo final de las métricas del sistema.
 \end{enumerate}
- 
+
+\begin{table}[htbp]
+\centering
+\caption{Características que forman el vector de cada esqueleto.}
+\label{tab:caracteristicas}
+\small
+\begin{tabular}{L{4.0cm}L{3.6cm}L{4.6cm}}
+\toprule
+\textbf{Característica} & \textbf{Puntos utilizados} & \textbf{Qué distingue} \\
+\midrule
+Ángulo de la rodilla (izq. y der.) & Cadera, rodilla y tobillo & Piernas extendidas (de pie) o flexionadas (sentado) \\
+\addlinespace
+Ángulo de la cadera (izq. y der.) & Hombro, cadera y rodilla & Tronco alineado con las piernas o doblado sobre ellas \\
+\addlinespace
+Inclinación del muslo respecto a la vertical (izq. y der.) & Cadera y rodilla & Muslo vertical (de pie) u horizontal (sentado) \\
+\addlinespace
+Inclinación del tronco respecto a la vertical & Punto medio de hombros y de caderas & Cuerpo erguido u horizontal (acostado o caído) \\
+\addlinespace
+Relación entre el alto y el ancho del esqueleto & Todos los puntos visibles & Silueta vertical u horizontal \\
+\addlinespace
+Altura de la cabeza respecto a la cadera & Nariz y punto medio de caderas & Cabeza por encima de la cadera o a su misma altura \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 El balanceo de clases y el aumento de datos se realizarán en la fase 2 de TT2, una vez completado el conjunto.
  
 \subsection{Preprocesamiento durante la operación}
@@ -989,17 +1037,65 @@ Durante el funcionamiento del prototipo, cada cuadro de la cámara sigue el mism
 \begin{enumerate}
   \item La cámara entrega cuadros a la tasa definida en el flujo de adquisición, con un mínimo de 5 cuadros por segundo (criterio CE-05).
   \item Cada cuadro se convierte a RGB y se redimensiona al tamaño de entrada de YOLO26-pose (640 píxeles en el lado mayor).
-  \item Se estiman los puntos clave, se filtran por confianza y se normalizan como en el entrenamiento.
+  \item Se estiman los puntos clave, se filtran por confianza, se trasladan y escalan, y se calcula el mismo vector de características que en el entrenamiento.
   \item El clasificador asigna una postura al cuadro. Para evitar cambios bruscos por errores aislados, se toma la postura mayoritaria en una ventana corta de cuadros.
   \item La postura se agrega a un historial de los últimos segundos, sobre el cual se aplica la regla temporal.
 \end{enumerate}
  
-\paragraph{Regla temporal.} Conforme a la definición operativa de la Sección~\ref{sec:definicion-caida}, se considera que ocurrió una caída cuando se cumplen dos condiciones: (1) la persona pasa de \textit{de pie} o \textit{sentado} a \textit{caído} en un intervalo menor a $\Delta t$, y (2) permanece en la postura \textit{caído} durante al menos $N$ segundos. La primera condición distingue una caída de una persona que se recuesta poco a poco, y la segunda evita alertas por movimientos momentáneos, como agacharse a recoger un objeto. Como valores iniciales se proponen $\Delta t = 2$~s y $N = 2$~s, compatibles con el tiempo máximo de notificación del criterio CE-06; ambos se ajustarán durante la fase de evaluación. Cuando se cumplen las dos condiciones, el módulo entrega el evento de caída al componente de alertas (RF-IA-06).
+\paragraph{Regla temporal.} Conforme a la definición operativa de la Sección~\ref{sec:definicion-caida}, se considera que ocurrió una caída cuando se cumplen dos condiciones: (1) la persona pasa de \textit{de pie} o \textit{sentado} a \textit{caído} en un intervalo menor a $\Delta t$, y (2) permanece en la postura \textit{caído} durante al menos $N$ segundos. La primera condición distingue una caída de una persona que se recuesta poco a poco, y la segunda evita alertas por movimientos momentáneos, como agacharse a recoger un objeto. Como valores iniciales se proponen $\Delta t = 2$~s y $N = 2$~s, compatibles con el tiempo máximo de notificación del criterio CE-06; ambos se ajustarán con las secuencias del grupo de ajuste. Cuando se cumplen las dos condiciones, el módulo entrega el evento de caída al componente de alertas (RF-IA-06).
  
 Ningún cuadro se almacena: cada imagen se descarta en cuanto se extraen sus puntos clave, en congruencia con el requisito de privacidad RNF-IA-04.
 
-\section{Diseño del extractor de pose}
-\textit{[Pendiente: diseño del algoritmo de estimación de pose (María Fernanda, noviembre)]}
+\section{Diseño del módulo de estimación de pose y clasificación}
+\label{sec:diseno-modelo}
+
+El módulo de inteligencia artificial se ejecuta completamente en la Raspberry Pi 5 y se compone de dos modelos en cadena: un estimador de pose, que obtiene el esqueleto de cada cuadro, y un clasificador, que asigna la postura a partir del vector de características (Sección~\ref{sec:preprocesamiento}).
+
+\subsection{Modelo de estimación de pose}
+
+Se utiliza YOLO26-pose con los pesos preentrenados en COCO, que ya estiman los 17 puntos clave requeridos (RF-IA-02), por lo que no es necesario reentrenarlo. La familia ofrece cinco variantes de distinto tamaño; la Tabla~\ref{tab:variantes-yolo} compara las tres más pequeñas.
+
+\begin{table}[htbp]
+\centering
+\caption{Variantes compactas de YOLO26-pose (entrada de 640 píxeles).}
+\label{tab:variantes-yolo}
+\small
+\begin{tabular}{L{3.0cm}L{3.0cm}L{3.0cm}L{2.4cm}}
+\toprule
+\textbf{Variante} & \textbf{mAP\textsubscript{pose} 50--95} & \textbf{Inferencia en CPU (ONNX)} & \textbf{Parámetros} \\
+\midrule
+YOLO26n-pose & 57.2 & 40.3 ms & 2.9 M \\
+\addlinespace
+YOLO26s-pose & 63.0 & 85.3 ms & 10.4 M \\
+\addlinespace
+YOLO26m-pose & 68.8 & 218.0 ms & 21.5 M \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los tiempos de la Tabla~\ref{tab:variantes-yolo} corresponden a un procesador de escritorio \parencite{ultralytics2026pose}. En la Raspberry Pi 5, el formato de exportación con mejor desempeño es NCNN, con el que la variante de detección YOLO26n requiere alrededor de 67~ms por imagen \parencite{ultralytics2026rpi}. Dado que la variante de pose realiza un número similar de operaciones, se estima un tiempo de entre 80 y 120~ms por cuadro, equivalente a una tasa de 8 a 12~FPS, que cumple el criterio CE-05. La variante \textit{s} realiza aproximadamente tres veces más operaciones, lo que la situaría por debajo de 5~FPS. Por ello se selecciona \textbf{YOLO26n-pose exportado a NCNN}. Estas cifras son estimaciones que se verificarán con mediciones en la placa durante la fase 3 de CRISP-ML(Q); si la tasa resulta insuficiente, se recurrirá a la cuantización a 8 bits y, en último caso, al acelerador descrito en la Sección~\ref{sec:seleccion-placa}.
+
+\subsection{Clasificador de posturas}
+
+El clasificador recibe el vector de nueve características de la Tabla~\ref{tab:caracteristicas} y entrega una de las cuatro posturas. Dado que la entrada es tabular y el conjunto de datos es pequeño, se evaluarán dos candidatos descritos en la Sección~\ref{sec:clasificadores}: XGBoost y un MLP pequeño. Un trabajo reciente que clasificó posturas a partir de esqueletos en una Raspberry Pi~4 obtuvo con XGBoost una exactitud cercana al 99.7\,\% al distinguir entre estar sentado o de pie, mientras que ninguno de los modelos evaluados superó el 76\,\% al reconocer posturas de riesgo \parencite{sierra2026posture}; este resultado respalda que la distinción entre \textit{acostado} y \textit{caído} se apoye en el análisis temporal y no solo en el clasificador.
+
+\begin{table}[htbp]
+\centering
+\caption{Clasificadores candidatos para la clasificación de posturas.}
+\label{tab:candidatos-clasificador}
+\small
+\begin{tabular}{L{2.4cm}L{4.6cm}L{4.6cm}}
+\toprule
+\textbf{Candidato} & \textbf{Ventajas} & \textbf{Desventajas} \\
+\midrule
+XGBoost & Buen desempeño con pocos datos, admite valores faltantes y permite identificar las características más relevantes & No pertenece a la familia de redes neuronales \\
+\addlinespace
+MLP & Se exporta a ONNX y se integra con el mismo entorno de ejecución del estimador de pose & Mayor riesgo de sobreajuste con pocos datos; requiere completar los valores faltantes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Ambos candidatos se entrenarán con el mismo conjunto de entrenamiento y se compararán en el conjunto de validación. El criterio principal de selección será la sensibilidad en la postura \textit{caído}, por ser la que origina las alertas (CE-01); como criterio secundario se utilizará el F1 promedio de las cuatro posturas y, en caso de empate, el tiempo de inferencia y la facilidad de interpretación. En ambos casos el costo de inferencia es despreciable frente al del estimador de pose, por lo que no compromete el criterio CE-05.
 
 \section{Diseño de interfaces de la aplicación móvil Android}
 \label{sec:mockups-app}
