@@ -314,7 +314,7 @@ Desarrollar un prototipo de sistema inteligente para la detección de caídas en
   \item \textbf{Caídas simuladas.} Por razones éticas no se registrarán caídas reales de adultos mayores; el entrenamiento y la evaluación se basan en caídas simuladas por voluntarios, por lo que el desempeño en condiciones reales puede ser menor \citep{igual2013challenges}.
   \item \textbf{Sin validación clínica.} El prototipo no se probará con adultos mayores ni en entornos hospitalarios, y no sustituye a un dispositivo médico certificado.
   \item \textbf{Sin contacto automático con servicios de emergencia.} El sistema notifica únicamente al tutor; la decisión de solicitar ayuda médica queda en manos de este.
-  \item \textbf{Conectividad.} El envío de la alerta requiere que la placa y el teléfono del tutor tengan conexión de red LAN.
+  \item \textbf{Conectividad.} Cuando el tutor se encuentra fuera del domicilio, el envío de la alerta requiere que tanto la placa Edge como el teléfono mantengan conexión a internet para establecer el túnel VPN punto a punto que los une (Sección~\ref{sec:arquitectura-iot}); si el túnel no está disponible, la notificación no llega al tutor hasta que se restablezca.
   \item \textbf{Plataforma móvil.} La aplicación se desarrollará solo para Android.
   \item \textbf{Sin almacenamiento de video.} Para proteger la privacidad no se guardan imágenes, por lo que el sistema no ofrece evidencia visual del evento.
   \item \textbf{Sin integración con cámaras del tutor.} El prototipo no accede, controla ni recibe imágenes de cámaras particulares; si el tutor instala las suyas, su uso es independiente del sistema (Sección~\ref{sec:etica}).
@@ -426,7 +426,7 @@ El trabajo se guía por los principios de la Declaración Universal sobre Bioét
 
 La imagen de una persona identificable es un dato personal y adquiere el carácter de dato personal sensible cuando revela aspectos de su estado de salud, como ocurre con la imagen de una persona tendida en el suelo después de una caída \parencite{lfpdppp2025}. Para esos datos la ley exige el consentimiento expreso y por escrito de la persona titular, así como un aviso de privacidad que describa las finalidades, los datos tratados y los mecanismos para ejercer los derechos de acceso, rectificación, cancelación y oposición; además, el responsable queda sujeto al deber de confidencialidad \parencite{lfpdppp2025}.
 
-A partir de esa calificación se aplicó el principio de proporcionalidad: si la finalidad del sistema es avisar que una persona cayó, basta con transmitir el evento y sus metadatos, y no la imagen que lo originó. La carga útil descrita en el Listado~\ref{lst:json_alerta} se compone del identificador del dispositivo, el tipo de evento, la marca de tiempo, el nivel de confianza del clasificador, la postura detectada y el tiempo de inactividad; ninguno de esos campos permite reconstruir la escena. Aun así, se tratan como datos personales: circulan solo en la red local, no se comparten con terceros y la bitácora de la aplicación conserva únicamente el registro del evento, sin imágenes, para el análisis de falsas alarmas de la fase 6 de CRISP-ML(Q).
+A partir de esa calificación se aplicó el principio de proporcionalidad: si la finalidad del sistema es avisar que una persona cayó, basta con transmitir el evento y sus metadatos, y no la imagen que lo originó. La carga útil descrita en el Listado~\ref{lst:json_alerta} se compone del identificador del dispositivo, el tipo de evento, la marca de tiempo, el nivel de confianza del clasificador, la postura detectada y el tiempo de inactividad; ninguno de esos campos permite reconstruir la escena. Aun así, se tratan como datos personales: circulan solo a través del túnel cifrado que une la placa Edge con el teléfono del tutor, no se comparten con terceros y la bitácora de la aplicación conserva únicamente el registro del evento, sin imágenes, para el análisis de falsas alarmas de la fase 6 de CRISP-ML(Q).
 
 \subsection{Garantías técnicas de privacidad}
 
@@ -438,7 +438,7 @@ La aplicación móvil se concibe como un apoyo suplementario para el cuidado y n
 
 \subsection{Consentimiento informado y ética de la investigación}
 
-La instalación del sistema requiere el consentimiento informado de la persona adulta mayor y del tutor, quienes deben conocer que se colocará una cámara en la vivienda, que el video se procesa y se descarta en el dispositivo, qué datos se transmiten al teléfono y cómo revocar la autorización. La aplicación presenta ese aviso en el registro de la cuenta (Figura~\ref{fig:mockup1}) y condiciona la vinculación del dispositivo a su aceptación. En el plano de la investigación no se registran caídas reales de adultos mayores: el entrenamiento y la validación emplean conjuntos públicos y caídas simuladas por voluntarios que otorgan su consentimiento, de modo que el prototipo no se prueba con pacientes ni en entornos hospitalarios y no emite diagnósticos (Sección~\ref{sec:alcances}). A diferencia de lo que ocurre durante la operación del prototipo, estas grabaciones sí se almacenan: se conservan cifradas, solo el equipo tiene acceso a ellas, se utilizan exclusivamente para este trabajo y se eliminan al concluirlo.
+La instalación del sistema requiere el consentimiento informado de la persona adulta mayor y del tutor, quienes deben conocer que se colocará una cámara en la vivienda, que el video se procesa y se descarta en el dispositivo, qué datos se transmiten al teléfono y cómo revocar la autorización. La aplicación presenta ese aviso durante la vinculación local del dispositivo (Figura~\ref{fig:mockup1}) y condiciona el escaneo del código QR a su aceptación. En el plano de la investigación no se registran caídas reales de adultos mayores: el entrenamiento y la validación emplean conjuntos públicos y caídas simuladas por voluntarios que otorgan su consentimiento, de modo que el prototipo no se prueba con pacientes ni en entornos hospitalarios y no emite diagnósticos (Sección~\ref{sec:alcances}). A diferencia de lo que ocurre durante la operación del prototipo, estas grabaciones sí se almacenan: se conservan cifradas, solo el equipo tiene acceso a ellas, se utilizan exclusivamente para este trabajo y se eliminan al concluirlo.
 
 % ============================================================
 \chapter{Marco teórico}
@@ -482,7 +482,7 @@ Existen dos enfoques generales. Los métodos \textit{bottom-up}, como OpenPose \
 
 La Organización Mundial de la Salud define las caídas como ``sucesos involuntarios que hacen perder el equilibrio y dar con el cuerpo en el suelo o en otra superficie firme que lo detenga'' \parencite{who2021caidas}; en el mismo sentido, los informes sobre prevención en la vejez describen la caída como el hecho de quedar sobre el suelo o en un nivel inferior de manera no intencional \parencite{who2008falls}. De esa definición se desprenden cuatro elementos que cualquier sistema de detección debe respetar: la pérdida de equilibrio, el carácter involuntario del suceso, el descenso a un nivel inferior y el contacto final con una superficie que detiene el cuerpo.
 
-La definición clínica describe el fenómeno, pero no indica cómo reconocerlo a partir de una cámara. Para el sistema, una caída no es una postura sino una transición: lo observable es que la persona pasa de una posición erguida a una posición en el suelo y que permanece ahí. Por ello se adopta una definición operativa: se considera que ocurrió una caída cuando la persona pasa de la postura \textit{de pie} o \textit{sentado} a la postura \textit{caído} en un intervalo menor a $\Delta t$ y permanece en ella al menos $N$ segundos, conforme a la regla temporal que se detalla en la Sección~\ref{sec:preproc-operacion}. Ambos parámetros se ajustan con datos experimentales y distinguen una caída de un descenso gradual.
+La definición clínica describe el fenómeno, pero no indica cómo reconocerlo a partir de una cámara. Para el sistema, una caída no es una postura sino una transición: lo observable es que la persona pasa de una posición erguida a una posición en el suelo y que permanece ahí. Por ello se adopta una definición operativa: se considera que ocurrió una caída cuando la persona pasa de la postura \textit{de pie} o \textit{sentado} a la postura \textit{caído} en un intervalo $\leq \Delta t$ y permanece en ella al menos $N$ segundos, conforme a la regla temporal que se detalla en la Sección~\ref{sec:preproc-operacion}. Ambos parámetros se ajustan con datos experimentales y distinguen una caída de un descenso gradual.
 
 \paragraph{Postura caído y postura acostado.} La postura \textit{caído} corresponde al cuerpo apoyado sobre el suelo o sobre un nivel inferior, con el tronco horizontal o inclinado respecto de la vertical. Su geometría es muy parecida a la de la postura \textit{acostado}, que es voluntaria y ocurre por lo general sobre una cama o un sofá. Esa similitud es la principal fuente de falsos positivos señalada en la literatura \parencite{nahian2026ai} y la razón por la que la clasificación por cuadro se complementa con el análisis de la secuencia y con la persistencia en el tiempo, en lugar de decidir con un solo esqueleto.
 
@@ -614,7 +614,7 @@ Con base en las características de calidad del producto definidas en el estánd
 \midrule
 RNF-001 & Privacidad & El subsistema de procesamiento local deberá retener el 100\,\% del flujo de imágenes en el dispositivo Edge para salvaguardar la privacidad en el hogar unipersonal. \\
 \addlinespace
-RNF-002 & Eficacia & El modelo de clasificación deberá alcanzar un rendimiento superior al 90\,\% en métricas de sensibilidad y especificidad para minimizar el impacto de falsas alarmas. \\
+RNF-002 & Eficacia & El modelo de clasificación deberá alcanzar una sensibilidad y una especificidad $\geq 90\,\%$ para minimizar el impacto de falsas alarmas. \\
 \addlinespace
 RNF-003 & Latencia & El broker MQTT deberá entregar los mensajes de alerta con menos de 2 segundos de latencia de red para asegurar la pronta atención ante accidentes. \\
 \addlinespace
@@ -753,8 +753,8 @@ Para dar solución a los requerimientos de protección de datos personales, el s
 \begin{enumerate}
     \item \textbf{Capa de Percepción:} Integrada por un nodo sensor visual (cámara RGB) conectado de manera cableada al dispositivo local, asegurando un suministro de imágenes ininterrumpido y exento de latencias de transmisión sobre red de área local (LAN).
     \item \textbf{Capa de Cómputo Edge:} Compuesta por una Raspberry Pi 5 que actúa como placa Edge perimetral, donde reside el módulo de inferencia de YOLO26. Esta capa delimita la "zona cero" de privacidad: procesa cada tensor visual, extrae la pose y destruye de inmediato las imágenes crudas directamente en memoria, impidiendo que material visual privado abandone el dispositivo.
-    \item \textbf{Capa de Mensajería:} Representada por el servidor ligero Mosquitto MQTT \parencite{mqtt2026estandar}. Esta capa aísla la carga pesada (la imagen) de la carga liviana (el metadato de alerta) y rutea los mensajes JSON hacia LAN de forma instantánea tras clasificar exitosamente un riesgo de caída.
-    \item \textbf{Capa de Aplicación:} Compuesta por un terminal móvil inteligente dotado de la aplicación nativa en Android \parencite{uv2026desarrollo}, el cual consume remotamente (bajo redes de área amplia o LAN) el tópico MQTT, habilitando al usuario final en tiempo real.
+    \item \textbf{Capa de Mensajería:} Representada por el servidor ligero Mosquitto MQTT \parencite{mqtt2026estandar}, que se ejecuta en la propia placa Edge. Esta capa aísla la carga pesada (la imagen) de la carga liviana (el metadato de alerta) y rutea los mensajes JSON hacia el túnel VPN punto a punto de forma instantánea tras clasificar exitosamente un riesgo de caída.
+    \item \textbf{Capa de Aplicación:} Compuesta por un terminal móvil inteligente dotado de la aplicación nativa en Android \parencite{uv2026desarrollo}, el cual se suscribe al tópico MQTT a través del túnel VPN punto a punto, sin importar si el tutor se encuentra dentro o fuera del domicilio, habilitando al usuario final en tiempo real.
 \end{enumerate}
 \begin{figure}[H]
 \centering
@@ -764,6 +764,7 @@ Para dar solución a los requerimientos de protección de datos personales, el s
     percep/.style={rectangle, draw=black, thick, rounded corners=3pt, minimum width=3.6cm, minimum height=1.2cm, align=center, fill=blue!10},
     edgebox/.style={rectangle, draw=black, thick, rounded corners=3pt, minimum width=3.6cm, minimum height=1.2cm, align=center, fill=teal!10},
     broker/.style={ellipse, draw=black, thick, minimum width=4.8cm, minimum height=1.5cm, align=center, fill=gray!15},
+    vpnbox/.style={rectangle, draw=black, thick, rounded corners=3pt, minimum width=4.4cm, minimum height=1.1cm, align=center, fill=violet!10},
     appbox/.style={rectangle, draw=black, thick, rounded corners=3pt, minimum width=3.6cm, minimum height=1.2cm, align=center, fill=orange!10},
     arrow/.style={-{Stealth[length=2.5mm]}, thick, draw=black!80}
 ]
@@ -771,11 +772,12 @@ Para dar solución a los requerimientos de protección de datos personales, el s
 % Nodos
 \node[percep] (cam) {\textbf{Capa de Percepción}\\Cámara RGB};
 \node[edgebox, right=3.5cm of cam] (edge) {\textbf{Capa Edge Computing}\\Raspberry Pi 5\\(Docker)\\Inferencia YOLO26};
-\node[broker, below=1.8cm of edge] (broker) {\textbf{Capa de Mensajería}\\Broker Mosquitto MQTT};
-\node[appbox, below=1.8cm of cam] (app) {\textbf{Capa de Aplicación}\\App Móvil Android};
+\node[broker, below=1.6cm of edge] (broker) {\textbf{Capa de Mensajería}\\Broker Mosquitto MQTT\\local en la placa Edge};
+\node[vpnbox, below=1.6cm of cam] (vpn) {\textbf{Túnel VPN P2P (WireGuard)}\\Tráfico cifrado, sin puertos\\expuestos a internet};
+\node[appbox, below=1.2cm of vpn] (app) {\textbf{Capa de Aplicación}\\App Móvil Android\\del tutor};
 
 % Límite de privacidad (Recuadro rojo punteado)
-\node[draw=red, dashed, thick, inner sep=12pt, fit=(edge),
+\node[draw=red, dashed, thick, inner sep=12pt, fit=(edge)(broker),
       label={[text=red, font=\bfseries\footnotesize, align=center]above:Límite de Privacidad\\(Procesamiento local, no se almacena video)}] (privacy) {};
 
 % Flechas y etiquetas
@@ -784,13 +786,23 @@ Para dar solución a los requerimientos de protección de datos personales, el s
 % La flecha hacia abajo lleva texto a la derecha
 \draw[arrow] (edge) -- node[right, font=\footnotesize, align=center] {Publish: JSON\\(Topic: alertas/caidas)} (broker);
 
-% La flecha hacia la izquierda lleva texto arriba
-\draw[arrow] (broker) -- node[above, font=\footnotesize, align=center] {Subscribe\\(Wi-Fi)} (app);
+% La alerta sale del domicilio únicamente por el túnel cifrado
+\draw[arrow] (broker) -- node[above, font=\footnotesize, align=center] {Subscribe\\(VPN)} (vpn);
+\draw[arrow] (vpn) -- node[right, font=\footnotesize, align=center] {Alerta cifrada\\(QoS 1)} (app);
 
 \end{tikzpicture}
-\caption{Diagrama de la arquitectura IoT.}
+\caption{Diagrama de la arquitectura IoT con acceso remoto mediante VPN punto a punto.}
 \label{fig:arquitectura_iot}
 \end{figure}
+
+\subsection{Topología de red y acceso remoto mediante VPN punto a punto}
+\label{sec:topologia-red}
+
+El caso de uso exige que el tutor reciba la alerta de emergencia aunque se encuentre fuera del domicilio, de modo que restringir el flujo de datos a la red de área local (LAN) contradice el objetivo del sistema. Al mismo tiempo, el requisito RNF-004 descarta los servidores en la nube por su costo. La solución adoptada es una red privada virtual (VPN) punto a punto basada en WireGuard \parencite{donenfeld2017wireguard}, que establece un túnel cifrado entre la placa Edge y el teléfono del tutor sobre la conexión a internet de la vivienda y no requiere contratar infraestructura de terceros.
+
+En esta topología, el \textit{broker} Mosquitto se ejecuta en la placa Edge y acepta conexiones únicamente por la interfaz del túnel; la aplicación móvil se suscribe al tópico de alertas a través de la misma interfaz. Así, el tráfico queda cifrado de extremo a extremo, no se abre ningún puerto en el módem de la vivienda y no se publica la dirección IP del nodo en internet. Las claves de cada extremo se generan durante la configuración inicial y se intercambian en el momento de la vinculación (Sección~\ref{sec:mockups-app}), por lo que el acceso al \textit{broker} queda limitado a los dispositivos que el tutor haya registrado. La coordinación de las claves puede delegarse en un servicio gratuito o resolverse con un nodo de coordinación propio de código abierto, de manera que la solución no introduce dependencia de servidores de pago y conserva el cumplimiento de RNF-004.
+
+El túnel añade un sobrecosto de latencia que se medirá en la fase 4 de CRISP-ML(Q) contra el requisito RNF-003 y el criterio CE-06. Cuando el tutor se encuentra dentro del domicilio, ambos extremos siguen comunicándose por la LAN, de modo que la operación local no depende de la VPN; cuando está fuera, el túnel es la única vía de entrega de la alerta, lo que se declara como limitación en la Sección~\ref{sec:alcances}.
 
 \subsection{Estructura de tópicos MQTT y formato de mensajes}
 La comunicación entre la Raspberry Pi 5 y la aplicación móvil se gestiona a través del \textit{broker} de código abierto \textbf{Eclipse Mosquitto} operando con nivel de calidad de servicio \textbf{QoS 1} (\textit{at least once}), lo que garantiza la recepción del mensaje de emergencia sin exceder el límite de latencia de red de 2 segundos (\textbf{RNF-003}). Se define la siguiente estructura de tópicos:
@@ -881,11 +893,11 @@ La arquitectura de la Figura~\ref{fig:arquitectura_iot} reserva una capa de cóm
 \midrule
 Raspberry Pi 5 (8~GB) & 4 Cortex-A76 a 2,4~GHz; GPU VideoCore VII & Ninguno; Hailo-8L opcional por PCIe & 8~GB & 110--140 & Seleccionada \\
 \addlinespace
-Raspberry Pi 4 (4~GB) & 4 Cortex-A53 a 1,8~GHz; GPU VideoCore VI & Ninguno & 4~GB & 70--90 & Descartada: menor desempeño \\
+Raspberry Pi 4 (4~GB) & 4 Cortex-A72 a 1,5~GHz; GPU VideoCore VI & Ninguno & 4~GB & 70--90 & Descartada: menor desempeño \\
 \addlinespace
-Jetson Orin Nano Super & 6 Cortex-A78AE; GPU Ampere & GPU, hasta 67 TOPS & 8~GB & $\approx$ 400 & Descartada: costo y consumo \\
+Jetson Orin Nano Super & 6 Cortex-A78AE; GPU Ampere & GPU, hasta 67 TOPS & 8~GB & 249 & Descartada: costo y consumo \\
 \addlinespace
-Coral Dev Board & 4 Cortex-A53 a 1,5~GHz & Edge TPU, 4 TOPS & 1~GB & 120--150 & Descartada: memoria y suministro \\
+Coral Dev Board & 4 Cortex-A53 a 1,5~GHz & Edge TPU, 4 TOPS & 1--4~GB & 120--150 & Descartada: compatibilidad de operaciones \\
 \addlinespace
 Orange Pi 5 (8~GB) & 4 Cortex-A76 y 4 Cortex-A55; GPU Mali-G610 & NPU, 6 TOPS & 8~GB & 85--110 & Descartada: soporte del NPU \\
 \bottomrule
@@ -894,9 +906,9 @@ Orange Pi 5 (8~GB) & 4 Cortex-A76 y 4 Cortex-A55; GPU Mali-G610 & NPU, 6 TOPS & 
 
 Los datos técnicos de la Tabla~\ref{tab:comparativa-placas} provienen de las hojas de datos y de los sitios oficiales de cada fabricante \parencite{raspberrypi2026pi5,raspberrypi2026pi4,nvidia2026jetson,coral2026devboard,orangepi2026pi5}. Los costos son estimaciones a partir de los precios de lista de cada fabricante y de los ajustes de precio anunciados durante 2026, por lo que se emplean solo como orden de magnitud \parencite{raspberrypi2026precios}.
 
-\paragraph{Raspberry Pi 5.} Se adopta la variante con 8~GB de memoria, que integra un procesador Broadcom BCM2712 de cuatro núcleos Arm Cortex-A76 a 2,4~GHz, memoria LPDDR4X, una GPU VideoCore VII, un puerto PCIe 2.0, dos conectores MIPI para cámara y pantalla, Ethernet Gigabit, Wi-Fi de doble banda, Bluetooth 5.0 y 40 pines de propósito general \parencite{raspberrypi2026pi5}. La placa no incluye una unidad de procesamiento neuronal, de modo que la inferencia se ejecuta en la CPU; esto es viable porque YOLO26 se diseñó para dispositivos de borde y puede exportarse a ONNX, TensorRT, TFLite o OpenVINO con cuantización de 8 bits \parencite{sapkota2025yolo26}. Si en la fase 3 de CRISP-ML(Q) la tasa de procesamiento no alcanza el criterio CE-05, el mismo puerto PCIe permite añadir un acelerador Hailo-8L de 13 TOPS sin cambiar de plataforma \parencite{raspberrypi2026aihat}. La variante de 8~GB se prefiere sobre las de 2 y 4~GB para dejar margen al sistema operativo, al contenedor de Docker, a OpenCV y al cliente MQTT, en cumplimiento del requisito RNF-IA-03, y se alimenta con una fuente USB-C de 5~V y 5~A (25~W) que cubre el consumo de la cámara y de la interfaz de red.
+\paragraph{Raspberry Pi 5.} Se adopta la variante con 8~GB de memoria, que integra un procesador Broadcom BCM2712 de cuatro núcleos Arm Cortex-A76 a 2,4~GHz, memoria LPDDR4X, una GPU VideoCore VII, un puerto PCIe 2.0, dos conectores MIPI para cámara y pantalla, Ethernet Gigabit, Wi-Fi de doble banda, Bluetooth 5.0 y 40 pines de propósito general \parencite{raspberrypi2026pi5}. La placa no incluye una unidad de procesamiento neuronal, de modo que la inferencia se ejecuta en la CPU; esto es viable porque YOLO26 se diseñó para dispositivos de borde y puede exportarse a ONNX, TensorRT, TFLite o OpenVINO con cuantización de 8 bits \parencite{sapkota2025yolo26}. Si en la fase 3 de CRISP-ML(Q) la tasa de procesamiento no alcanza el criterio CE-05, el mismo puerto PCIe permite añadir un acelerador Hailo-8L de 13 TOPS sin cambiar de plataforma \parencite{raspberrypi2026aihat}. La variante de 8~GB se prefiere sobre las de 2 y 4~GB para dejar margen al sistema operativo, al contenedor de Docker, a OpenCV y al cliente MQTT, en cumplimiento del requisito RNF-IA-03, y se alimenta con la fuente oficial USB-C de 5,1~V y 5~A (27~W) que cubre el consumo de la cámara y de la interfaz de red.
 
-\paragraph{Alternativas descartadas.} La Raspberry Pi 4 tiene un costo menor, pero su procesador Cortex-A53 de cuatro núcleos a 1,8~GHz es de una generación anterior, carece de PCIe y no ofrece una ruta de ampliación si el modelo no alcanza la tasa requerida \parencite{raspberrypi2026pi4}; la diferencia de precio no compensa el menor desempeño. La Jetson Orin Nano Super es la opción más potente del conjunto, con hasta 67 TOPS en su GPU Ampere y 8~GB de memoria LPDDR5 \parencite{nvidia2026jetson}, pero cuesta alrededor del triple, consume hasta 25~W y su capacidad excede lo que necesita un modelo compacto que solo debe procesar entre 5 y 7 cuadros por segundo. La Coral Dev Board integra una Edge TPU de 4 TOPS con bajo consumo, pero limita la placa a 1~GB de memoria y exige convertir el modelo por completo a TFLite con cuantización entera, además de que su suministro y soporte se han reducido \parencite{coral2026devboard}. Por último, la Orange Pi 5 ofrece un procesador RK3588S con una NPU de 6 TOPS y un precio menor, pero su acelerador requiere la cadena de herramientas RKNN y su documentación y comunidad son más reducidas, lo que añade riesgo técnico a un proyecto con calendario fijo \parencite{orangepi2026pi5}.
+\paragraph{Alternativas descartadas.} La Raspberry Pi 4 tiene un costo menor, pero su procesador Cortex-A72 de cuatro núcleos a 1,5~GHz es de una generación anterior al Cortex-A76 de la Raspberry Pi 5, carece de PCIe y no ofrece una ruta de ampliación si el modelo no alcanza la tasa requerida \parencite{raspberrypi2026pi4}; la diferencia de precio no compensa el menor desempeño. La Jetson Orin Nano Super es la opción más potente del conjunto, con hasta 67 TOPS en su GPU Ampere y 8~GB de memoria LPDDR5 \parencite{nvidia2026jetson}, pero cuesta 249~USD, alrededor del doble de la Raspberry Pi 5 de 8~GB, consume hasta 25~W y su capacidad excede lo que necesita un modelo compacto que solo debe procesar entre 5 y 7 cuadros por segundo. La Coral Dev Board integra una Edge TPU de 4 TOPS con bajo consumo y está disponible también en una variante de 4~GB de memoria, por lo que la capacidad de memoria no es el motivo de su descarte; el obstáculo es la compatibilidad de operaciones, ya que la Edge TPU solo ejecuta modelos TFLite cuantizados por completo a enteros de 8 bits y no admite todas las operaciones de las redes de detección y estimación de pose, de modo que las capas no soportadas deben volver a implementarse o ejecutarse en la CPU, lo que anula la ventaja del acelerador \parencite{coral2026devboard}. A ello se suma que su suministro y soporte se han reducido. Por último, la Orange Pi 5 ofrece un procesador RK3588S con una NPU de 6 TOPS y un precio menor, pero su acelerador requiere la cadena de herramientas RKNN y su documentación y comunidad son más reducidas, lo que añade riesgo técnico a un proyecto con calendario fijo \parencite{orangepi2026pi5}.
 
 \paragraph{Decisión.} Por lo anterior, la Raspberry Pi 5 de 8~GB se adopta como placa Edge del prototipo. La decisión no altera la arquitectura definida en la Sección~\ref{sec:arquitectura-iot}: la placa conserva el papel de capa de cómputo local, mantiene el procesamiento y el descarte de las imágenes dentro de la vivienda (RNF-001) y actúa como cliente publicador del \textit{broker} Mosquitto. El cumplimiento de los criterios CE-05 y CE-06 se verificará con mediciones sobre este hardware en la fase 3 de CRISP-ML(Q) y, si no se alcanza, se recurrirá al acelerador mencionado antes de considerar un cambio de plataforma.
 
@@ -906,7 +918,7 @@ Los datos técnicos de la Tabla~\ref{tab:comparativa-placas} provienen de las ho
 El flujo de adquisición de video parametriza la captura óptica en la Raspberry Pi 5 para suministrar cuadros de forma continua al módulo de inteligencia artificial, evitando cuellos de botella en la memoria y el procesador. Los parámetros de operación se definieron en conjunto con los requisitos del extractor de pose (\textbf{RF-IA-01}) y la estrategia de preprocesamiento en operación (Sección~\ref{sec:preproc-operacion}):
 
 \begin{itemize}
-    \item \textbf{Interfaz de captura y resolución de entrada:} La cámara RGB se conecta localmente mediante interfaz cableada (USB 2.0 / CSI) a la Raspberry Pi 5. La captura nativa se configura a una resolución base de $640 \times 480$ píxeles (relación de aspecto 4:3) y se redimensiona en memoria mediante OpenCV para que el lado mayor sea de $640\text{ píxeles}$, coincidiendo con la dimensión de entrada del modelo \texttt{YOLO26-pose}.
+    \item \textbf{Interfaz de captura y resolución de entrada:} La cámara RGB se conecta localmente mediante interfaz cableada (USB 2.0 / CSI) a la Raspberry Pi 5. La captura nativa se configura a una resolución de $640 \times 480$ píxeles (relación de aspecto 4:3), de modo que el lado mayor coincide con la dimensión de entrada del modelo \texttt{YOLO26-pose}; por ello el cuadro se entrega al modelo sin ningún redimensionamiento posterior y la etapa de acondicionamiento se limita a la conversión de espacio de color.
     \item \textbf{Tasa de cuadros por segundo (FPS):} El flujo de adquisición se regula a una tasa de captura sostenida de $5$ a $7\text{ FPS}$, garantizando una frecuencia de procesamiento en la placa superior al umbral mínimo establecido en los criterios de éxito (\textbf{CE-05}: $\geq 5\text{ FPS}$). Esta frecuencia temporal permite capturar con suficiente granularidad el descenso rápido del cuerpo durante una caída (intervalo $\Delta t \leq 2\text{ s}$) sin saturar la cola de lectura.
     \item \textbf{Formato de los cuadros en memoria (acuerdo con el módulo de IA):} La biblioteca OpenCV decodifica cada cuadro de la cámara como un arreglo matricial tridimensional de 8 bits por canal ($\texttt{uint8}$, con valores de intensidad entre $0$ y $255$) en orden de canales \texttt{BGR}. Antes de entregarse al modelo de estimación de pose, el arreglo se transforma en memoria RAM al espacio de color \texttt{RGB} con dimensiones $H \times W \times 3$.
     \item \textbf{Gestión de memoria volátil y privacidad:} En cumplimiento con los requisitos \textbf{RNF-001} y \textbf{RNF-IA-04}, no se realiza escritura de archivos de imagen ni de video en almacenamiento secundario. Se utiliza un búfer de lectura de un solo cuadro (\textit{single-frame buffer}) para descartar cuadros rezagados y procesar únicamente el instante actual; una vez extraídos los 17 puntos clave del esqueleto, el tensor de imagen se sobrescribe de inmediato en la memoria RAM.
@@ -931,7 +943,7 @@ La Figura~\ref{fig:flujo_adquisicion} ilustra la tubería de datos desde el sens
 
 \node[edgeblock, right=of cam] (opencv) {\textbf{Adquisición en Placa Edge}\\Lectura con OpenCV (RAM)\\Búfer de 1 cuadro (\texttt{uint8})\\Matriz \texttt{BGR} ($H \times W \times 3$)};
 
-\node[edgeblock, below=of opencv] (preproc) {\textbf{Acondicionamiento de Formato}\\Conversión \texttt{BGR} $\rightarrow$ \texttt{RGB}\\Redimensionado a $640\text{ px}$\\Entrega en memoria (\textbf{RF-IA-01})};
+\node[edgeblock, below=of opencv] (preproc) {\textbf{Acondicionamiento de Formato}\\Conversión \texttt{BGR} $\rightarrow$ \texttt{RGB}\\Resolución nativa $640 \times 480$ px\\Entrega en memoria (\textbf{RF-IA-01})};
 
 \node[aiblock, left=of preproc] (yolo) {\textbf{Modelo YOLO26-pose}\\Inferencia en el borde\\Salida: 17 keypoints $(x, y, c)$\\en formato COCO (\textbf{RF-IA-02})};
 
@@ -1036,13 +1048,13 @@ Durante el funcionamiento del prototipo, cada cuadro de la cámara sigue el mism
  
 \begin{enumerate}
   \item La cámara entrega cuadros a la tasa definida en el flujo de adquisición, con un mínimo de 5 cuadros por segundo (criterio CE-05).
-  \item Cada cuadro se convierte a RGB y se redimensiona al tamaño de entrada de YOLO26-pose (640 píxeles en el lado mayor).
+  \item Cada cuadro se convierte a RGB y se entrega al modelo en la resolución de captura, que ya corresponde al tamaño de entrada de YOLO26-pose (640 píxeles en el lado mayor), sin redimensionamiento adicional.
   \item Se estiman los puntos clave, se filtran por confianza, se trasladan y escalan, y se calcula el mismo vector de características que en el entrenamiento.
   \item El clasificador asigna una postura al cuadro. Para evitar cambios bruscos por errores aislados, se toma la postura mayoritaria en una ventana corta de cuadros.
   \item La postura se agrega a un historial de los últimos segundos, sobre el cual se aplica la regla temporal.
 \end{enumerate}
  
-\paragraph{Regla temporal.} Conforme a la definición operativa de la Sección~\ref{sec:definicion-caida}, se considera que ocurrió una caída cuando se cumplen dos condiciones: (1) la persona pasa de \textit{de pie} o \textit{sentado} a \textit{caído} en un intervalo menor a $\Delta t$, y (2) permanece en la postura \textit{caído} durante al menos $N$ segundos. La primera condición distingue una caída de una persona que se recuesta poco a poco, y la segunda evita alertas por movimientos momentáneos, como agacharse a recoger un objeto. Como valores iniciales se proponen $\Delta t = 2$~s y $N = 2$~s, compatibles con el tiempo máximo de notificación del criterio CE-06; ambos se ajustarán con las secuencias del grupo de ajuste. Cuando se cumplen las dos condiciones, el módulo entrega el evento de caída al componente de alertas (RF-IA-06).
+\paragraph{Regla temporal.} Conforme a la definición operativa de la Sección~\ref{sec:definicion-caida}, se considera que ocurrió una caída cuando se cumplen dos condiciones: (1) la persona pasa de \textit{de pie} o \textit{sentado} a \textit{caído} en un intervalo $\leq \Delta t$, y (2) permanece en la postura \textit{caído} durante al menos $N$ segundos. La primera condición distingue una caída de una persona que se recuesta poco a poco, y la segunda evita alertas por movimientos momentáneos, como agacharse a recoger un objeto. Como valores iniciales se proponen $\Delta t = 2$~s y $N = 2$~s, compatibles con el tiempo máximo de notificación del criterio CE-06; ambos se ajustarán con las secuencias del grupo de ajuste. Cuando se cumplen las dos condiciones, el módulo entrega el evento de caída al componente de alertas (RF-IA-06).
  
 Ningún cuadro se almacena: cada imagen se descarta en cuanto se extraen sus puntos clave, en congruencia con el requisito de privacidad RNF-IA-04.
 
@@ -1102,28 +1114,30 @@ Ambos candidatos se entrenarán con el mismo conjunto de entrenamiento y se comp
 
 Con el propósito de cerrar el ciclo de notificación hacia el tutor, se diseñaron las interfaces de usuario (\textit{mockups}) de la aplicación móvil nativa para Android. El diseño prioriza una experiencia de usuario clara y de baja carga cognitiva, permitiendo gestionar el dispositivo de borde y reaccionar con rapidez ante una alerta de emergencia (\textbf{RF-005}).
 
-\subsection{Registro del tutor y vinculación del dispositivo Edge}
-El flujo inicial de configuración guía al tutor en tres pasos para dar de alta su cuenta y enlazar el nodo perimetral instalado en la vivienda del adulto mayor (Figura~\ref{fig:mockups_onboarding}):
+\subsection{Vinculación local del dispositivo Edge mediante código QR}
+El flujo inicial de configuración guía al tutor en tres pasos para conocer el aviso de privacidad y enlazar el nodo perimetral instalado en la vivienda del adulto mayor (Figura~\ref{fig:mockups_onboarding}). Como el sistema no cuenta con un servidor centralizado que valide y almacene identidades y el requisito RNF-004 descarta los servicios externos, la vinculación se resuelve de forma local: no se solicita correo electrónico ni contraseña y no se mantiene una base de datos de usuarios.
 
 \begin{enumerate}
-    \item \textbf{Creación de cuenta y aviso de privacidad (Figura~\ref{fig:mockup1}):} Solicita las credenciales del tutor (correo electrónico y contraseña) y presenta de forma explícita el principio de \textit{Privacidad Local} (\textbf{RNF-001}), informando que las imágenes se procesan y permanecen en el dispositivo de cuidado y que únicamente se envían alertas de caída al teléfono móvil.
-    \item \textbf{Descubrimiento y vinculación de hardware (Figura~\ref{fig:mockup2}):} Escanea e identifica los nodos disponibles en el entorno cercano (por ejemplo, los dispositivos \texttt{EG-014} y \texttt{EG-027}) para asociar el identificador único de la placa Edge con la suscripción al tópico MQTT correspondiente.
+    \item \textbf{Aviso de privacidad y consentimiento (Figura~\ref{fig:mockup1}):} Presenta de forma explícita el principio de \textit{Privacidad Local} (\textbf{RNF-001}), informando que las imágenes se procesan y permanecen en el dispositivo de cuidado y que únicamente se envían alertas de caída al teléfono móvil. La aceptación de este aviso es condición para continuar con la vinculación.
+    \item \textbf{Escaneo del código QR del dispositivo (Figura~\ref{fig:mockup2}):} Durante su configuración inicial, la placa Edge genera y muestra un código QR con los parámetros de conexión del nodo: la dirección que le asigna el túnel VPN punto a punto (Sección~\ref{sec:topologia-red}), el puerto del \textit{broker} MQTT local, el identificador del dispositivo (por ejemplo, \texttt{EG-014}), las credenciales de acceso al \textit{broker} y el tópico al que debe suscribirse la aplicación. La aplicación lee el código con la cámara del teléfono y guarda esos parámetros cifrados en el almacenamiento local del dispositivo, con lo que la vinculación queda completa sin intervención de un servidor.
     \item \textbf{Personalización del perfil de cuidado (Figura~\ref{fig:mockup3}):} Permite asignar un nombre identificable al adulto mayor (por ejemplo, \textit{Abuelo José}) y un icono representativo asociado al dispositivo vinculado (\texttt{EG-014}).
 \end{enumerate}
+
+Este esquema sustituye al registro tradicional de cuentas y aporta dos ventajas sobre él: la identidad del tutor no se almacena en ningún servidor y el acceso al \textit{broker} queda restringido a quien haya escaneado el código. Si el código se extravía o las credenciales se comprometen, la placa puede regenerarlas y emitir un código nuevo que invalida el anterior.
 
 \begin{figure}[htbp]
 \centering
 \begin{subfigure}[b]{0.31\textwidth}
     \centering
     \includegraphics[width=\textwidth]{Figuras/mockup1.png}
-    \caption{Registro de cuenta.}
+    \caption{Aviso de privacidad y consentimiento.}
     \label{fig:mockup1}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.31\textwidth}
     \centering
     \includegraphics[width=\textwidth]{Figuras/mockup_2.png}
-    \caption{Escaneo de nodos Edge.}
+    \caption{Escaneo del código QR.}
     \label{fig:mockup2}
 \end{subfigure}
 \hfill
@@ -1133,7 +1147,7 @@ El flujo inicial de configuración guía al tutor en tres pasos para dar de alta
     \caption{Asignación de perfil.}
     \label{fig:mockup3}
 \end{subfigure}
-\caption{Mockups del flujo de registro y vinculación del dispositivo en la aplicación móvil.}
+\caption{Mockups del flujo de vinculación local del dispositivo en la aplicación móvil.}
 \label{fig:mockups_onboarding}
 \end{figure}
 
