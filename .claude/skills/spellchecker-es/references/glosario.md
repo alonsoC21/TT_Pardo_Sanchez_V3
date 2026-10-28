@@ -201,3 +201,8 @@ Reglas para editar esta lista:
 - Kandagatla
 - Kolyshkina
 - Inna
+- Headscale
+- NetBird
+- Hole
+- Punching
+- Isolation

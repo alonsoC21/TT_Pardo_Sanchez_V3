@@ -271,7 +271,7 @@ acceder a rutas fuera del proyecto.
 
 ## 8. Hallazgos conocidos (revisar, no corregir en silencio)
 
-Estado al 27 de octubre de 2026. Vuelve a ejecutar las herramientas antes de
+Estado al 28 de octubre de 2026. Vuelve a ejecutar las herramientas antes de
 confiar en esta lista; los hallazgos ya corregidos se retiran de aquí.
 
 1. `main.tex`, línea 45: `\graphicspath{{figuras/}}` usa minúsculas, pero la
@@ -281,7 +281,7 @@ confiar en esta lista; los hallazgos ya corregidos se retiran de aquí.
    documento emplea `\parencite`/`\textcite`.
 3. `main.tex`, líneas 217 y 247: aparecen `90\%` y `28\%` sin `\,`; el resto del
    documento usa `90\,\%`.
-4. `main.tex`, líneas 334, 340 y 1092: hay decimales con punto (`98.33`,
+4. `main.tex`, líneas 334, 340 y 1094: hay decimales con punto (`98.33`,
    `98.5`, `99.7`) en prosa; corresponde coma decimal.
 5. Etiquetas definidas y nunca referenciadas: `fig:casos_uso`, `tab:rf-ia`,
    `tab:rnf-ia` y `tab:candidatos-clasificador`. Conviene referenciarlas en el
@@ -295,21 +295,25 @@ confiar en esta lista; los hallazgos ya corregidos se retiran de aquí.
    el capítulo «Anexos» existe pero está vacío (`ap:material`).
 8. `main.tex`, Figura `fig:arquitectura_iot`: la capa de cómputo Edge menciona
    Docker y no hay sección que describa el despliegue en contenedores.
-9. `main.tex`, `sec:topologia-red`: la coordinación de las claves de la VPN
-   sigue abierta («un servicio gratuito o un nodo propio»). Hay que fijar una
-   opción y sostenerla frente a RNF-004; el texto ya declara el puerto UDP del
-   túnel y la contingencia de CGNAT.
-10. `main.tex`, `sec:mockups-app`: describe el contenido del QR y el retorno de
-    la clave pública, pero no especifica cómo muestra la placa el código en una
-    instalación sin monitor (HDMI temporal, terminal o página local).
-11. `main.tex`, `sec:topologia-red` y `sec:arquitectura-iot`: no se especifica si
-    Mosquitto usa TLS además del túnel WireGuard. Conviene declararlo.
-12. `Bibliografía.tex` duplica la base bibliográfica y no está incluida en la
+9. `main.tex`, `sec:topologia-red` y `sec:arquitectura-iot`: no se especifica si
+   Mosquitto usa TLS además del túnel WireGuard. Conviene declararlo.
+10. `Bibliografía.tex` duplica la base bibliográfica y no está incluida en la
     compilación. Trátala como material heredado.
+11. Figuras raster pendientes de regenerar tras el rediseño de red y
+    vinculación: `Figuras/casos_de_uso.png` (Figura `fig:casos_uso`) conserva en
+    la nota «Requisitos y restricciones» la línea «Vinculación: el QR incluye
+    dirección VPN, puerto, device_id, credenciales del broker y tópico», que ya
+    no corresponde al mecanismo vigente, y `Figuras/mockup_2.png` (Figura
+    `fig:mockup2`) muestra el subtítulo «La placa Edge muestra el código QR
+    durante su configuración inicial», cuando el QR es una etiqueta física
+    impresa. No hay fuente editable en el repositorio; requieren el archivo
+    original (`.drawio`, `.pptx` o `.svg`) para corregirlos sin pérdida.
 
 Corregidos y retirados de esta lista: el carácter suelto `a` de la línea 15,
-«craneocefálicos» (ahora «craneoencefálicos») y la marca `[Pendiente: ...]` de
-la sección de diseño del extractor de pose.
+«craneocefálicos» (ahora «craneoencefálicos»), la marca `[Pendiente: ...]` de
+la sección de diseño del extractor de pose, la coordinación abierta de las
+claves de la VPN y el mecanismo de exhibición del QR en una placa sin monitor
+(ahora etiqueta física con canal de aprovisionamiento en `wlan0` o BLE).
 
 ## 9. Criterios de aceptación de un cambio
 
