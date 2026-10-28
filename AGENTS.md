@@ -28,10 +28,15 @@ trabajo previo de los autores.
 - **Arquitectura:** cámara RGB → placa Edge → estimación de pose con
   YOLO26-pose → clasificador de posturas → regla temporal → MQTT (Mosquitto,
   QoS 1) → aplicación móvil Android → tutor.
-- **Plataforma de borde:** Raspberry Pi 5 como hardware de referencia del
-  marco del proyecto. El texto actual usa el término genérico **placa Edge**;
-  no introduzcas el nombre del modelo ni cambies ese término sin confirmación
-  del autor.
+- **Plataforma de borde:** la **placa Edge** es el nombre de la capa de cómputo
+  local en la arquitectura (capas, diagramas y flujos) y se conserva como
+  término genérico. El hardware que la implementa es la **Raspberry Pi 5 de
+  8 GB**, ya justificada en la sección «Selección de la plataforma de cómputo
+  en el borde» de `main.tex`. Ambas denominaciones conviven y no son
+  intercambiables: usa «placa Edge» al describir la arquitectura y «Raspberry
+  Pi 5» al hablar de especificaciones, configuración, desempeño o mediciones.
+  No cambies la placa seleccionada, ni introduzcas otro modelo, sin
+  autorización del autor.
 - **Criterios de éxito vigentes:** sensibilidad ≥ 90 %, especificidad ≥ 90 %,
   precisión ≥ 85 %, exactitud ≥ 90 %, ≥ 5 FPS en la placa y ≤ 8 s de tiempo de
   extremo a extremo. La latencia de red del *broker* debe ser < 2 s.
@@ -212,7 +217,8 @@ python .claude/skills/spellchecker-es/scripts/spellcheck_es.py main.tex
 | Usa | Evita |
 | --- | --- |
 | cuadro | *frame* (salvo en inglés o como término técnico explícito) |
-| placa Edge | *edge device* genérico |
+| placa Edge (capa de arquitectura) | *edge device* genérico, «Raspberry» a secas |
+| Raspberry Pi 5 (hardware concreto) | «la Pi», «la placa Raspberry» |
 | adulto mayor / persona adulta mayor | anciano, viejo |
 | tutor / persona cuidadora | usuario cualquiera |
 | caído (postura) | tirado |
@@ -265,30 +271,45 @@ acceder a rutas fuera del proyecto.
 
 ## 8. Hallazgos conocidos (revisar, no corregir en silencio)
 
-Estado al 21 de octubre de 2026. Vuelve a ejecutar las herramientas antes de
-confiar en esta lista.
+Estado al 27 de octubre de 2026. Vuelve a ejecutar las herramientas antes de
+confiar en esta lista; los hallazgos ya corregidos se retiran de aquí.
 
-1. `main.tex`, línea 15: hay un carácter suelto `a` entre `\lstset{...}` y el
-   comentario de idioma. Rompe la compilación. Cualquier limpieza debe
-   respaldarse y proponerse al autor.
-2. `main.tex`, línea 45: `\graphicspath{{figuras/}}` usa minúsculas, pero la
+1. `main.tex`, línea 45: `\graphicspath{{figuras/}}` usa minúsculas, pero la
    carpeta real es `Figuras/`. No afecta mientras todas las rutas incluyan
    `Figuras/`, pero fallaría si se usa una ruta relativa.
-3. `main.tex`, línea 249: «traumatismos craneocefálicos» debería ser
-   «traumatismos craneoencefálicos».
-4. `main.tex`, líneas 302 y 315: se usan `\citep`/`\citet`; el resto del
+2. `main.tex`, líneas 301 y 314: se usan `\citep`/`\citet`; el resto del
    documento emplea `\parencite`/`\textcite`.
-5. `main.tex`, líneas 217 y 247: aparecen `90\%` y `28\%` sin `\,`; el resto
-   del documento usa `90\,\%`.
-6. `main.tex`, líneas 334 y 340: hay decimales con punto (`98.33`, `98.5`) en
-   prosa; corresponde coma decimal.
-7. `bibliografia.bib`: `kolyshkina2021interpretability` y `mosquitto_2018` no
-   se citan. No las elimines sin confirmación.
-8. `main.tex`, sección «Diseño del extractor de pose»: contiene una marca
-   `[Pendiente: ...]` de María Fernanda. No la sustituyas por contenido
-   inventado.
-9. `Bibliografía.tex` duplica la base bibliográfica y no está incluida en la
-   compilación. Trátala como material heredado.
+3. `main.tex`, líneas 217 y 247: aparecen `90\%` y `28\%` sin `\,`; el resto del
+   documento usa `90\,\%`.
+4. `main.tex`, líneas 334, 340 y 1092: hay decimales con punto (`98.33`,
+   `98.5`, `99.7`) en prosa; corresponde coma decimal.
+5. Etiquetas definidas y nunca referenciadas: `fig:casos_uso`, `tab:rf-ia`,
+   `tab:rnf-ia` y `tab:candidatos-clasificador`. Conviene referenciarlas en el
+   texto o retirarlas con autorización del autor.
+6. `bibliografia.bib`: `kolyshkina2021interpretability` sigue sin citarse. Es un
+   trabajo sobre interpretabilidad y CRISP-ML en salud pública y encajaría en la
+   metodología o en el diseño del clasificador, pero la decisión de dónde
+   citarlo corresponde al autor; no la elimines sin confirmación.
+7. El cuerpo del documento termina en el capítulo «Diseño del sistema». Faltan
+   desarrollo e implementación, pruebas, resultados, discusión y conclusiones;
+   el capítulo «Anexos» existe pero está vacío (`ap:material`).
+8. `main.tex`, Figura `fig:arquitectura_iot`: la capa de cómputo Edge menciona
+   Docker y no hay sección que describa el despliegue en contenedores.
+9. `main.tex`, `sec:topologia-red`: la coordinación de las claves de la VPN
+   sigue abierta («un servicio gratuito o un nodo propio»). Hay que fijar una
+   opción y sostenerla frente a RNF-004; el texto ya declara el puerto UDP del
+   túnel y la contingencia de CGNAT.
+10. `main.tex`, `sec:mockups-app`: describe el contenido del QR y el retorno de
+    la clave pública, pero no especifica cómo muestra la placa el código en una
+    instalación sin monitor (HDMI temporal, terminal o página local).
+11. `main.tex`, `sec:topologia-red` y `sec:arquitectura-iot`: no se especifica si
+    Mosquitto usa TLS además del túnel WireGuard. Conviene declararlo.
+12. `Bibliografía.tex` duplica la base bibliográfica y no está incluida en la
+    compilación. Trátala como material heredado.
+
+Corregidos y retirados de esta lista: el carácter suelto `a` de la línea 15,
+«craneocefálicos» (ahora «craneoencefálicos») y la marca `[Pendiente: ...]` de
+la sección de diseño del extractor de pose.
 
 ## 9. Criterios de aceptación de un cambio
 
