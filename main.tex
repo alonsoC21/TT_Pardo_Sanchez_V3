@@ -298,7 +298,7 @@ Desarrollar un prototipo de sistema inteligente para la detección de caídas en
 \subsection{Alcances}
 \begin{itemize}
   \item Se desarrollará un \textbf{prototipo funcional}, no un producto comercial, que integre la captura de video, la detección de caídas y la notificación al tutor.
-  \item El sistema utilizará \textbf{una cámara RGB} conectada a una \textbf{placa Edge basada en Raspberry Pi 5}, donde se ejecutarán la estimación de pose con YOLO26 \citep{sapkota2025yolo26}, el clasificador de posturas y el análisis temporal de la secuencia de posturas.
+  \item El sistema utilizará \textbf{una cámara RGB} conectada por USB a una \textbf{placa Edge basada en Raspberry Pi 5}, donde se ejecutarán la estimación de pose con YOLO26 \citep{sapkota2025yolo26}, el clasificador de posturas y el análisis temporal de la secuencia de posturas.
   \item El sistema está pensado para \textbf{una persona en una habitación interior} con iluminación artificial o natural suficiente.
   \item El clasificador reconocerá en cada cuadro cuatro posturas: \textbf{de pie}, \textbf{sentado}, \textbf{acostado} y \textbf{caído}; a partir de su secuencia, el sistema decidirá si ocurrió una \textbf{caída} o una actividad cotidiana, considerando caminar, sentarse, acostarse y agacharse.
   \item El clasificador se entrenará con \textbf{conjuntos de datos públicos} de posturas, y el sistema se evaluará con secuencias de video públicas y con \textbf{grabaciones propias} de caídas simuladas y actividades de la vida diaria, capturadas por el equipo en condiciones controladas.
@@ -704,7 +704,7 @@ RNF-IA-06 & Trazabilidad & Cada experimento de entrenamiento debe registrar dato
 \subsection{Restricciones}
 
 \begin{itemize}
-  \item Se utiliza una sola cámara RGB convencional; no se emplean sensores de profundidad ni dispositivos portables.
+  \item Se utiliza una sola cámara RGB convencional con conexión USB; no se emplean sensores de profundidad ni dispositivos portables.
   \item El sistema está pensado para un adulto mayor en una habitación; escenas con varias personas quedan fuera del alcance.
   \item Por la dificultad ética de obtener caídas reales de adultos mayores, el entrenamiento se basa en conjuntos de datos públicos con caídas simuladas \parencite{igual2013challenges,alam2022review}; esta limitación se mitiga evaluando el sistema con grabaciones capturadas por el equipo en condiciones controladas.
   \item La capacidad de cómputo y la memoria están limitadas por la placa Edge seleccionada, la Raspberry Pi 5, por lo que se priorizan las variantes compactas de YOLO26-pose \parencite{sapkota2025yolo26}.
@@ -751,7 +751,7 @@ Los valores de CE-01 a CE-04 se fijaron por debajo de los reportados en condicio
 Para dar solución a los requerimientos de protección de datos personales, el sistema asume una estricta jerarquía de \textit{Edge Computing} dividida en cuatro estratos funcionales:
 
 \begin{enumerate}
-    \item \textbf{Capa de Percepción:} Integrada por un nodo sensor visual (cámara RGB) conectado de manera cableada al dispositivo local, asegurando un suministro de imágenes ininterrumpido y exento de latencias de transmisión sobre red de área local (LAN).
+    \item \textbf{Capa de Percepción:} Integrada por un nodo sensor visual (cámara RGB) conectado por USB al dispositivo local, asegurando un suministro de imágenes ininterrumpido y exento de latencias de transmisión sobre red de área local (LAN).
     \item \textbf{Capa de Cómputo Edge:} Compuesta por una Raspberry Pi 5 que actúa como placa Edge perimetral, donde reside el módulo de inferencia de YOLO26. Esta capa delimita la "zona cero" de privacidad: procesa cada tensor visual, extrae la pose y destruye de inmediato las imágenes crudas directamente en memoria, impidiendo que material visual privado abandone el dispositivo.
     \item \textbf{Capa de Mensajería:} Representada por el servidor ligero Mosquitto MQTT \parencite{mqtt2026estandar}, que se ejecuta en la propia placa Edge. Esta capa aísla la carga pesada (la imagen) de la carga liviana (el metadato de alerta) y rutea los mensajes JSON hacia el túnel VPN punto a punto de forma instantánea tras clasificar exitosamente un riesgo de caída.
     \item \textbf{Capa de Aplicación:} Compuesta por un terminal móvil inteligente dotado de la aplicación nativa en Android \parencite{uv2026desarrollo}, el cual se suscribe al tópico MQTT a través del túnel VPN punto a punto, sin importar si el tutor se encuentra dentro o fuera del domicilio, habilitando al usuario final en tiempo real.
@@ -781,7 +781,7 @@ Para dar solución a los requerimientos de protección de datos personales, el s
       label={[text=red, font=\bfseries\footnotesize, align=center]above:Límite de Privacidad\\(Procesamiento local, no se almacena video)}] (privacy) {};
 
 % Flechas y etiquetas
-\draw[arrow] (cam) -- node[above, font=\footnotesize, align=center] {Video en vivo\\(USB/CSI)} (edge);
+\draw[arrow] (cam) -- node[above, font=\footnotesize, align=center] {Video en vivo\\(USB)} (edge);
 
 % La flecha hacia abajo lleva texto a la derecha
 \draw[arrow] (edge) -- node[right, font=\footnotesize, align=center] {Publish: JSON\\(Topic: alertas/caidas)} (broker);
@@ -920,7 +920,7 @@ Los datos técnicos de la Tabla~\ref{tab:comparativa-placas} provienen de las ho
 El flujo de adquisición de video parametriza la captura óptica en la Raspberry Pi 5 para suministrar cuadros de forma continua al módulo de inteligencia artificial, evitando cuellos de botella en la memoria y el procesador. Los parámetros de operación se definieron en conjunto con los requisitos del extractor de pose (\textbf{RF-IA-01}) y la estrategia de preprocesamiento en operación (Sección~\ref{sec:preproc-operacion}):
 
 \begin{itemize}
-    \item \textbf{Interfaz de captura y resolución de entrada:} La cámara RGB se conecta localmente mediante interfaz cableada (USB 2.0 / CSI) a la Raspberry Pi 5. La captura nativa se configura a una resolución de $640 \times 480$ píxeles (relación de aspecto 4:3), de modo que el lado mayor coincide con la dimensión de entrada del modelo \texttt{YOLO26-pose}; por ello el cuadro se entrega al modelo sin ningún redimensionamiento posterior y la etapa de acondicionamiento se limita a la conversión de espacio de color.
+    \item \textbf{Interfaz de captura y resolución de entrada:} La captura se realiza con una cámara web USB convencional, que entrega video RGB y se conecta por ese puerto a la Raspberry Pi 5. Aunque el sensor puede operar a 1080p, la resolución de captura se fija en $640 \times 480$ píxeles (relación de aspecto 4:3) mediante las propiedades \texttt{CAP\_PROP\_FRAME\_WIDTH} y \texttt{CAP\_PROP\_FRAME\_HEIGHT} de OpenCV, de modo que es la propia cámara la que entrega cada cuadro ya en el tamaño de entrada del modelo \texttt{YOLO26-pose}. Con ello se evita el redimensionamiento por cuadro: capturar a 1080p y reducir después obligaría a mover y volver a escalar más de dos millones de píxeles en cada iteración, lo que consumiría CPU y memoria de la placa sin aportar información útil al modelo y comprometería la tasa de procesamiento de CE-05. Al iniciar el flujo se comprueba la resolución realmente negociada con el controlador; si el dispositivo no admite el modo solicitado y entrega otro, se registra el valor efectivo y solo entonces se aplica un escalado de contingencia. El lado mayor del cuadro coincide así con la dimensión de entrada del modelo y la etapa de acondicionamiento se limita a la conversión de espacio de color.
     \item \textbf{Tasa de cuadros por segundo (FPS):} El flujo de adquisición se regula a una tasa de captura sostenida de $5$ a $7\text{ FPS}$, garantizando una frecuencia de procesamiento en la placa superior al umbral mínimo establecido en los criterios de éxito (\textbf{CE-05}: $\geq 5\text{ FPS}$). Esta frecuencia temporal permite capturar con suficiente granularidad el descenso rápido del cuerpo durante una caída (intervalo $\Delta t \leq 2\text{ s}$) sin saturar la cola de lectura.
     \item \textbf{Formato de los cuadros en memoria (acuerdo con el módulo de IA):} La biblioteca OpenCV decodifica cada cuadro de la cámara como un arreglo matricial tridimensional de 8 bits por canal ($\texttt{uint8}$, con valores de intensidad entre $0$ y $255$) en orden de canales \texttt{BGR}. Antes de entregarse al modelo de estimación de pose, el arreglo se transforma en memoria RAM al espacio de color \texttt{RGB} con dimensiones $H \times W \times 3$.
     \item \textbf{Gestión de memoria volátil y privacidad:} En cumplimiento con los requisitos \textbf{RNF-001} y \textbf{RNF-IA-04}, no se realiza escritura de archivos de imagen ni de video en almacenamiento secundario. Se utiliza un búfer de lectura de un solo cuadro (\textit{single-frame buffer}) para descartar cuadros rezagados y procesar únicamente el instante actual; una vez extraídos los 17 puntos clave del esqueleto, el tensor de imagen se sobrescribe de inmediato en la memoria RAM.
@@ -941,18 +941,18 @@ La Figura~\ref{fig:flujo_adquisicion} ilustra la tubería de datos desde el sens
 ]
 
 % Nodos
-\node[block] (cam) {\textbf{Cámara RGB}\\Sensor óptico local\\Captura: $640 \times 480\text{ px}$\\Tasa: $5\text{--}7\text{ FPS}$};
+\node[block] (cam) {\textbf{Cámara RGB USB}\\Sensor óptico local\\Captura: $640 \times 480\text{ px}$\\Tasa: $5\text{--}7\text{ FPS}$};
 
 \node[edgeblock, right=of cam] (opencv) {\textbf{Adquisición en Placa Edge}\\Lectura con OpenCV (RAM)\\Búfer de 1 cuadro (\texttt{uint8})\\Matriz \texttt{BGR} ($H \times W \times 3$)};
 
-\node[edgeblock, below=of opencv] (preproc) {\textbf{Acondicionamiento de Formato}\\Conversión \texttt{BGR} $\rightarrow$ \texttt{RGB}\\Resolución nativa $640 \times 480$ px\\Entrega en memoria (\textbf{RF-IA-01})};
+\node[edgeblock, below=of opencv] (preproc) {\textbf{Acondicionamiento de Formato}\\Conversión \texttt{BGR} $\rightarrow$ \texttt{RGB}\\Resolución de entrada $640 \times 480$ px\\Entrega en memoria (\textbf{RF-IA-01})};
 
 \node[aiblock, left=of preproc] (yolo) {\textbf{Modelo YOLO26-pose}\\Inferencia en el borde\\Salida: 17 keypoints $(x, y, c)$\\en formato COCO (\textbf{RF-IA-02})};
 
 \node[memblock, below=of preproc] (destroy) {\textbf{Liberación Volátil (RNF-001)}\\Destrucción inmediata del cuadro\\en RAM (0\,\% almacenamiento)};
 
 % Flechas
-\draw[arrow] (cam) -- node[above, font=\scriptsize] {USB / CSI} (opencv);
+\draw[arrow] (cam) -- node[above, font=\scriptsize] {USB} (opencv);
 \draw[arrow] (opencv) -- (preproc);
 \draw[arrow] (preproc) -- node[above, font=\scriptsize] {Tensor RGB} (yolo);
 \draw[arrow] (yolo.south) |- (destroy.west);
@@ -1050,7 +1050,7 @@ Durante el funcionamiento del prototipo, cada cuadro de la cámara sigue el mism
  
 \begin{enumerate}
   \item La cámara entrega cuadros a la tasa definida en el flujo de adquisición, con un mínimo de 5 cuadros por segundo (criterio CE-05).
-  \item Cada cuadro se convierte a RGB y se entrega al modelo en la resolución de captura, que ya corresponde al tamaño de entrada de YOLO26-pose (640 píxeles en el lado mayor), sin redimensionamiento adicional.
+  \item Cada cuadro se convierte a RGB y se entrega al modelo en la resolución de captura, que ya corresponde al tamaño de entrada de YOLO26-pose (640 píxeles en el lado mayor) porque así se solicitó a la cámara, sin redimensionamiento adicional.
   \item Se estiman los puntos clave, se filtran por confianza, se trasladan y escalan, y se calcula el mismo vector de características que en el entrenamiento.
   \item El clasificador asigna una postura al cuadro. Para evitar cambios bruscos por errores aislados, se toma la postura mayoritaria en una ventana corta de cuadros.
   \item La postura se agrega a un historial de los últimos segundos, sobre el cual se aplica la regla temporal.
