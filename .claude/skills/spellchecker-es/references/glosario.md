@@ -221,3 +221,7 @@ Reglas para editar esta lista:
 - mAP
 - swap
 - microSD
+- Giri
+- Mukhtorov
+- Vdoviak
+- Sledevič
