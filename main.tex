@@ -998,7 +998,7 @@ Los valores de CE-01 a CE-04 son metas definidas por el equipo, y se contrastaro
 
 \paragraph{Presupuesto de latencia y criterio fuera de línea.} El criterio CE-06 mide hasta la notificación en el teléfono, de modo que incluye la red y el despertar de Android y no puede medirse con UP-Fall ni con UR Fall, que son videos sin placa, \textit{broker} ni teléfono. Por ello se define un criterio aparte para la evaluación fuera de línea, CE-07, que mide hasta el evento emitido por el módulo de IA, y se reparte el tiempo de CE-06 entre sus componentes (Tabla~\ref{tab:presupuesto-latencia}). Los valores son un presupuesto de diseño y no mediciones: $\Delta t$ y $N$ son los valores iniciales de la regla temporal (Sección~\ref{sec:preproc-operacion}) y se ajustarán con el grupo de ajuste; los demás se medirán en la fase 4.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Presupuesto de latencia de la alerta, desde el inicio de la caída hasta la notificación en el teléfono.}
 \label{tab:presupuesto-latencia}
@@ -1133,7 +1133,7 @@ La lista de control de acceso (\textit{ACL}) de Mosquitto asigna a cada teléfon
 
 \paragraph{Contrato de datos entre el módulo de IA y la placa.} La Tabla~\ref{tab:contrato-ia-iot} define cada campo del mensaje: quién lo genera, qué significa y cuándo cambia. El módulo de IA no construye el mensaje ni conoce MQTT: entrega a la placa, mediante una interfaz interna, solo los campos que le corresponden (\texttt{timestamp}, \texttt{confidence}, \texttt{posture\_state} e \texttt{inactivity\_seconds}); el cliente MQTT de la placa genera los identificadores, completa la carga útil y la publica. El \texttt{event\_id} identifica cada mensaje y permite a la aplicación descartar los duplicados que QoS 1 puede generar; el \texttt{incident\_id} identifica la caída y permite agrupar las reemisiones y el cierre en una sola alerta activa, en una sola entrada del historial y en un solo incidente para el análisis de falsas alarmas de la fase 6 de CRISP-ML(Q).
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Contrato de datos entre el módulo de IA y el subsistema de alertas: campos del mensaje.}
 \label{tab:contrato-ia-iot}
