@@ -426,7 +426,7 @@ CRISP-ML(Q) consta de seis fases. La Tabla~\ref{tab:fases-crisp} muestra cómo s
 
 \paragraph{Orden de las fases 4 y 5.} En la Tabla~\ref{tab:fases-crisp}, el periodo de la fase 4 es posterior al de la fase 5. No se invirtió el orden de las fases del modelo de proceso: la evaluación final de este proyecto se realiza sobre el sistema ya desplegado, porque CE-05 y CE-06 solo pueden medirse con la placa, el \textit{broker}, la VPN y el teléfono en funcionamiento. Durante la fase 3 solo se hacen mediciones y validaciones intermedias (la medición preliminar de YOLO26n-pose en la Raspberry Pi 5 y la validación del clasificador), que orientan la selección del modelo pero no cierran ningún criterio de éxito: CE-05 y CE-06 se verifican exclusivamente en la fase 4.
 
-\paragraph{Aseguramiento de la calidad.} Siguiendo el enfoque de CRISP-ML(Q), al cierre de cada fase se verifica que sus entregables cumplan lo necesario para la siguiente y se registran los riesgos detectados. Los principales riesgos identificados desde la fase 1 son: (1) que el modelo no alcance las métricas objetivo con caídas reales, dado que los datos públicos contienen caídas simuladas; (2) que el modelo no alcance la tasa de cuadros requerida en la Raspberry Pi 5; (3) que las falsas alarmas reduzcan la confianza del tutor en el sistema; y (4) que la alerta no llegue al tutor por la pérdida del túnel VPN, por las restricciones de energía de Android o por un corte en la vivienda. Estos riesgos se atienden, respectivamente, con grabaciones propias de caídas simuladas y actividades cotidianas, con la medición preliminar de YOLO26n-pose en la placa durante la fase 3 y su verificación formal en la fase 4, con el análisis de las alertas descartadas en la fase 6 y con la detección del estado del dispositivo y las pruebas de extremo a extremo de la fase 4.
+\paragraph{Aseguramiento de la calidad.} Siguiendo el enfoque de CRISP-ML(Q), al cierre de cada fase se verifica que sus entregables cumplan lo necesario para la siguiente y se registran los riesgos detectados. Los principales riesgos identificados desde la fase 1 son: (1) que el modelo no alcance las métricas objetivo con caídas reales, dado que los datos públicos contienen caídas simuladas; (2) que el modelo no alcance la tasa de cuadros requerida en la Raspberry Pi 5, riesgo que el equipo de sistemas y el de inteligencia artificial comparten, porque el acelerador Hailo-8L previsto como respaldo supone que YOLO26-pose pueda compilarse para él, algo que no está verificado (Sección~\ref{sec:seleccion-placa}); (3) que las falsas alarmas reduzcan la confianza del tutor en el sistema; y (4) que la alerta no llegue al tutor por la pérdida del túnel VPN, por las restricciones de energía de Android o por un corte en la vivienda. Estos riesgos se atienden, respectivamente, con grabaciones propias de caídas simuladas y actividades cotidianas, con la medición preliminar de YOLO26n-pose en la placa durante la fase 3 y su verificación formal en la fase 4 (aplicando primero la cuantización y una variante más pequeña, y solo después comprobando la compatibilidad del acelerador), con el análisis de las alertas descartadas en la fase 6 y con la detección del estado del dispositivo y las pruebas de extremo a extremo de la fase 4.
 
 \paragraph{Iteración.} Como lo plantea el modelo, las fases no son estrictamente secuenciales: si en la evaluación no se alcanzan los criterios de éxito, se regresa a la preparación de los datos, a la ingeniería del modelo o al despliegue (por ejemplo, para ajustar la reemisión de alertas o la configuración del túnel) y se repite la evaluación.
 
@@ -715,7 +715,7 @@ El sistema se modela como uno solo, ElderGuard, con cuatro actores (Figura~\ref{
     \item \textbf{Establecer túnel VPN (CU-10):} el servicio de coordinación de la VPN registra los pares y permite el túnel; es precondición de CU-03, CU-06 y CU-08.
 \end{itemize}
 
-Las fichas de los casos de uso principales se presentan en las Tablas~\ref{tab:cu-01}, \ref{tab:cu-03}, \ref{tab:cu-04}, \ref{tab:cu-05} y~\ref{tab:cu-06}.
+Las fichas de los casos de uso principales se presentan en las Tablas~\ref{tab:cu-01}, \ref{tab:cu-03}, \ref{tab:cu-04}, \ref{tab:cu-05}, \ref{tab:cu-06}, \ref{tab:cu-08} y~\ref{tab:cu-09}.
 
 \begin{sidewaysfigure}
     \centering
@@ -889,6 +889,50 @@ Flujo principal & (1) El tutor acepta el aviso y declara que existe el consentim
 Flujos alternos & A1: si la ventana de vinculación vence, se repite desde el paso 2. A2: si la placa ya tiene dos teléfonos vinculados, rechaza la solicitud. \\
 \addlinespace
 Postcondición & Teléfono vinculado y evento \textit{Dispositivo vinculado} en el historial. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Ficha del caso de uso CU-08: Supervisar estado del dispositivo.}
+\label{tab:cu-08}
+\small
+\begin{tabular}{L{3.0cm}L{9.0cm}}
+\toprule
+\textbf{Campo} & \textbf{Descripción} \\
+\midrule
+Actor & Tutor. \\
+\addlinespace
+Precondiciones & Teléfono vinculado y túnel VPN establecido (CU-10). \\
+\addlinespace
+Flujo principal & (1) La placa publica un latido periódico (valor inicial: cada 10~s) y su estado (RF-SIS-11). (2) La aplicación recibe los latidos y muestra \textit{Conectado} y la hora del último latido en la tarjeta del dispositivo. (3) Si hay pérdida del túnel o hay otra VPN activa, muestra una advertencia persistente con la indicación para restablecerlo (RF-SIS-13). \\
+\addlinespace
+Flujos alternos & A1: si dejan de llegar latidos durante el número configurable de intervalos (valor inicial: 3), la aplicación marca el dispositivo como \textit{Desconectado} y se ejecuta CU-09. A2: si el propio teléfono no tiene red o túnel activo, muestra \textit{Sin conexión} en lugar de atribuir la falla a la placa. \\
+\addlinespace
+Postcondición & El panel refleja el último estado conocido; no es instantáneo, porque depende del intervalo de los latidos. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Ficha del caso de uso CU-09: Notificar desconexión.}
+\label{tab:cu-09}
+\small
+\begin{tabular}{L{3.0cm}L{9.0cm}}
+\toprule
+\textbf{Campo} & \textbf{Descripción} \\
+\midrule
+Actor & Tutor. \\
+\addlinespace
+Precondiciones & CU-08 en ejecución y el dispositivo pasa a \textit{Desconectado} tras el número configurable de latidos perdidos. \\
+\addlinespace
+Flujo principal & (1) La aplicación comprueba que el propio teléfono tiene red y túnel activo. (2) Emite una notificación local de prioridad alta, distinta de la alarma de caída y sin su sonido de emergencia (RF-SIS-12). (3) Registra el evento \textit{Desconexión} en el historial (RF-SIS-14). \\
+\addlinespace
+Flujos alternos & A1: si el teléfono no tiene conexión, no atribuye la falla a la placa y muestra \textit{Sin conexión}. A2: si el dispositivo se desconectó mientras ocurría una caída, la alerta no llega hasta que se restablezca la conexión (Sección~\ref{sec:alcances}). \\
+\addlinespace
+Postcondición & Desconexión registrada en la bitácora y tutor informado de que, mientras dure, no se garantiza la entrega de alertas. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1097,7 +1141,7 @@ Para dar solución a los requerimientos de protección de datos personales, el s
 
 El caso de uso exige que el tutor reciba la alerta de emergencia aunque se encuentre fuera del domicilio, de modo que restringir el flujo de datos a la red de área local (LAN) contradice el objetivo del sistema. Al mismo tiempo, el requisito RNF-SIS-04 descarta los servidores externos de pago. La solución adoptada es una única red privada virtual (VPN) de malla basada en WireGuard \parencite{donenfeld2017wireguard} y gestionada con NetBird \parencite{netbird2026networks}, una plataforma de código abierto que usa WireGuard para el plano de datos y un plano de control para registrar a los pares y coordinar sus conexiones. Se eligió NetBird sobre alternativas equivalentes, como Tailscale \parencite{tailscale2020nat}, porque su cliente Android admite el registro del dispositivo con una llave de configuración (\textit{setup key}) sin inicio de sesión interactivo \parencite{netbird2026android}, porque su código es abierto y puede autoalojarse si el servicio gratuito cambia sus condiciones y porque permite políticas de acceso por grupos \parencite{netbird2026acl}. La placa Edge se enlaza al módem de la vivienda mediante cable Ethernet (\texttt{eth0}), lo que le proporciona una salida a internet estable y deja libre su interfaz inalámbrica (\texttt{wlan0}) para el aprovisionamiento local del teléfono (Sección~\ref{sec:mockups-app}).
 
-\paragraph{Propiedad de la red y autenticación de los pares.} Existe una sola red privada, cuya cuenta administradora pertenece al equipo del proyecto; ni la persona adulta mayor ni el tutor son propietarios ni administradores de ella. Esa cuenta es la única identidad de usuario del servicio de VPN, y la aplicación ElderGuard no crea cuentas para el tutor (Sección~\ref{sec:mockups-app}). Cada vivienda es un grupo aislado (por ejemplo, \texttt{hogar-EG-014}) y una política de acceso permite únicamente que los teléfonos de ese grupo alcancen el puerto del \textit{broker} de su placa; la política predeterminada, que permite la comunicación entre todos los pares, se elimina \parencite{netbird2026acl}, de modo que las placas y los teléfonos de viviendas distintas no se ven entre sí. Los pares se autentican con llaves de configuración de un solo uso que el equipo genera antes de la instalación, con caducidad y asignación automática al grupo de la vivienda \parencite{netbird2026setupkeys}: la placa recibe la suya al prepararse y el teléfono del tutor recibe otra durante la vinculación (Sección~\ref{sec:mockups-app}). Los pares de claves de WireGuard los genera cada cliente y los distribuye el plano de control; no se intercambian de forma manual ni por el canal de proximidad. La documentación de NetBird desaconseja las llaves de configuración para dispositivos de usuarios finales, porque un par registrado así carece de una identidad asociada que pueda verificarse de nuevo \parencite{netbird2026bootstrap}; el prototipo acepta ese compromiso a cambio de no crear cuentas de usuario y lo declara como una limitación de seguridad que un producto resolvería con autenticación individual.
+\paragraph{Propiedad de la red y autenticación de los pares.} Existe una sola red privada, cuya cuenta administradora pertenece al equipo del proyecto; ni la persona adulta mayor ni el tutor son propietarios ni administradores de ella. Esa cuenta es la única identidad de usuario del servicio de VPN, y la aplicación ElderGuard no crea cuentas para el tutor (Sección~\ref{sec:mockups-app}). Cada vivienda es un grupo aislado (por ejemplo, \texttt{hogar-EG-014}) y una política de acceso permite únicamente que los teléfonos de ese grupo alcancen el puerto del \textit{broker} de su placa; la política predeterminada, que permite la comunicación entre todos los pares, se elimina \parencite{netbird2026acl}, de modo que las placas y los teléfonos de viviendas distintas no se ven entre sí. Los pares se autentican con llaves de configuración de un solo uso que el equipo genera antes de la instalación, con caducidad y asignación automática al grupo de la vivienda \parencite{netbird2026setupkeys}: la placa recibe la suya al prepararse y el teléfono del tutor recibe otra durante la vinculación (Sección~\ref{sec:mockups-app}). Los pares de claves de WireGuard los genera cada cliente y los distribuye el plano de control; no se intercambian de forma manual ni por el canal de proximidad. La documentación de NetBird desaconseja las llaves de configuración para dispositivos de usuarios finales, porque un par registrado así carece de una identidad asociada que pueda verificarse de nuevo \parencite{netbird2026bootstrap}; el prototipo acepta ese compromiso a cambio de no crear cuentas de usuario y lo declara como una limitación de seguridad que un producto resolvería con autenticación individual. Como la red y su plano de control los administra el equipo, este actúa como responsable de los metadatos de conexión que el servicio registra, durante el periodo del proyecto: atiende las solicitudes de revocación y de ejercicio de derechos (Sección~\ref{sec:consentimiento}), da de baja los pares que correspondan y declara esos metadatos en el aviso de privacidad. Un producto comercial tendría que definir quién asume esa responsabilidad frente a cada instalación.
 
 \paragraph{Ubicación del cliente VPN en el teléfono.} El cliente VPN del teléfono es la aplicación NetBird, instalada de forma independiente, y no un componente integrado en ElderGuard: la aplicación del prototipo no incluye ni gestiona la pila de VPN y se limita a consultar si existe una red con transporte VPN y si el \textit{broker} es alcanzable. Durante la vinculación, ElderGuard recibe de la placa la llave de configuración de un solo uso, la copia al portapapeles y guía al tutor para introducirla en NetBird. La consecuencia es que el tutor instala dos aplicaciones y que la restricción de una sola VPN activa en Android (Sección~\ref{sec:vpn-android}) recae sobre NetBird.
 
@@ -1202,7 +1246,7 @@ Para evitar una ráfaga de notificaciones cuando la persona permanece en el suel
 
 Cada placa admite hasta dos teléfonos vinculados, por ejemplo, los de dos familiares. Cada teléfono tiene su propio usuario y contraseña en el \textit{broker}, su identificador de cliente y su sesión persistente, de modo que ambos reciben la alerta de forma independiente y la cola de uno no afecta a la del otro. Para que una alerta no quede abierta en un teléfono cuando el otro ya la atendió, ambas aplicaciones están suscritas al tópico de respuesta (\textbf{RF-SIS-08}): al recibir una respuesta de otro teléfono con el mismo \texttt{incident\_id}, la aplicación cierra la alerta activa, detiene la alarma y muestra cómo se resolvió y por qué teléfono (según el identificador pseudónimo \texttt{responder}). Si los dos tutores responden de forma distinta casi al mismo tiempo, la placa detiene las reemisiones con la primera respuesta que recibe y el incidente se registra con la acción de mayor prioridad: prevalece la confirmación sobre el descarte, y las dos respuestas quedan en la bitácora. El reinicio de la vinculación mediante el botón de la placa revoca a todos los teléfonos a la vez (Sección~\ref{sec:mockups-app}); el prototipo no ofrece revocación individual.
 
-Una misma persona puede cuidar a más de una persona adulta mayor, es decir, vincular su teléfono con varias placas. Cada placa ejecuta su propio \textit{broker}, accesible en su propia dirección del túnel, y en la red privada cada vivienda es un grupo distinto (Sección~\ref{sec:topologia-red}). Por ello la aplicación mantiene una conexión y una sesión MQTT por placa, y el panel principal muestra una tarjeta por dispositivo con su estado. El consumo de batería y de conexiones crece de forma lineal con el número de placas, y no se emplea un \textit{broker} central que las reúna, porque eso concentraría las alertas de todas las viviendas en un único servidor y contradiría el principio de privacidad local (RNF-SIS-01) y el requisito de costo (RNF-SIS-04). El prototipo se valida con una placa y dos teléfonos; el comportamiento con varias placas se describe, pero no se mide.
+Una misma persona puede cuidar a más de una persona adulta mayor, es decir, vincular su teléfono con varias placas. Cada placa ejecuta su propio \textit{broker}, accesible en su propia dirección del túnel, y en la red privada cada vivienda es un grupo distinto (Sección~\ref{sec:topologia-red}). Por ello la aplicación mantiene una conexión y una sesión MQTT por placa, y el panel principal muestra una tarjeta por dispositivo con su estado. El consumo de batería y de conexiones crece de forma lineal con el número de placas, y no se emplea un \textit{broker} central que las reúna, porque eso concentraría las alertas de todas las viviendas en un único servidor y contradiría el principio de privacidad local (RNF-SIS-01) y el requisito de costo (RNF-SIS-04). El registro de un mismo teléfono en la red privada de más de una vivienda no está resuelto por el mecanismo descrito en la Sección~\ref{sec:topologia-red}: una llave de configuración de un solo uso registra un par nuevo y asigna su grupo en ese momento, de modo que un teléfono ya registrado podría requerir que el equipo lo agregue de forma administrativa al grupo de la segunda vivienda. Este comportamiento no se ha verificado con la plataforma de VPN. Por ello, el prototipo se valida con una placa y dos teléfonos; el comportamiento con varias placas se describe, pero no se mide ni se garantiza, y su definición se pospone a la implementación.
 
 
 
@@ -1317,8 +1361,8 @@ Los datos técnicos de la Tabla~\ref{tab:comparativa-placas} provienen de las ho
   \item Disipador activo oficial, para sostener la inferencia continua sin reducción térmica de frecuencia.
   \item Cámara web USB con captura de $640 \times 480$ píxeles.
   \item Cable Ethernet hacia el módem (\texttt{eth0}).
-  \item Botón pulsador externo conectado a un pin GPIO, para abrir la ventana de vinculación y reiniciar la vinculación.
-  \item Gabinete cerrado con la etiqueta impresa del código QR (Sección~\ref{sec:mockups-app}).
+  \item Botón pulsador conectado a un pin GPIO y montado en el gabinete, de modo que se acciona desde el exterior sin abrirlo, para abrir la ventana de vinculación y reiniciar la vinculación.
+  \item Gabinete cerrado con la etiqueta impresa del código QR (Sección~\ref{sec:mockups-app}) y con el botón accesible desde fuera.
   \item Opcional y no verificado: acelerador Hailo-8L por el puerto PCIe.
 \end{itemize}
 
