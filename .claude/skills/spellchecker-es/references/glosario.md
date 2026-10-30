@@ -219,3 +219,5 @@ Reglas para editar esta lista:
 - sobreajustarse
 - der
 - mAP
+- swap
+- microSD

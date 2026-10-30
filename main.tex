@@ -282,7 +282,7 @@ Desarrollar un prototipo de sistema inteligente para la detección de caídas en
 
 \subsection{Objetivos específicos}
 \begin{enumerate}
-    \item Configurar la arquitectura de adquisición de datos mediante el uso de cámaras RGB para obtener información del entorno.
+    \item Configurar la arquitectura de adquisición de datos mediante el uso de una cámara RGB para obtener información del entorno.
 
     \item Implementar el modelo YOLO26 \parencite{ultralytics2026yolo26} para la estimación de pose y extracción de los puntos clave del esqueleto humano a través de imágenes RGB, obteniendo como salida las coordenadas (x, y) de un conjunto de keypoints (por ejemplo, nariz, ojos, hombros, codos, muñecas, caderas, rodillas, tobillos), optimizando el procesamiento para dispositivos edge; este procesamiento local reduce la exposición de datos y disminuye la identificabilidad del usuario.
  
@@ -428,11 +428,13 @@ El trabajo se guía por los principios de la Declaración Universal sobre Bioét
 
 La imagen de una persona identificable es un dato personal y adquiere el carácter de dato personal sensible cuando revela aspectos de su estado de salud, como ocurre con la imagen de una persona tendida en el suelo después de una caída \parencite{lfpdppp2025}. Para esos datos la ley exige el consentimiento expreso y por escrito de la persona titular, así como un aviso de privacidad que describa las finalidades, los datos tratados y los mecanismos para ejercer los derechos de acceso, rectificación, cancelación y oposición; además, el responsable queda sujeto al deber de confidencialidad \parencite{lfpdppp2025}.
 
-A partir de esa calificación se aplicó el principio de proporcionalidad: si la finalidad del sistema es avisar que una persona cayó, basta con transmitir el evento y sus metadatos, y no la imagen que lo originó. La carga útil descrita en el Listado~\ref{lst:json_alerta} se compone del identificador del dispositivo, un identificador único de evento, el tipo de evento, la marca de tiempo, el nivel de confianza del clasificador, la postura detectada y el tiempo de inactividad; ninguno de esos campos permite reconstruir la escena. Aun así, se tratan como datos personales: circulan solo a través del túnel cifrado que une la placa Edge con el teléfono del tutor; el plano de control de la VPN solo registra metadatos de conexión, como direcciones IP y horarios, que se declaran en el aviso de privacidad y no incluyen el contenido de las alertas. La bitácora de la aplicación conserva únicamente el registro del evento, sin imágenes, para el análisis de falsas alarmas de la fase 6 de CRISP-ML(Q).
+A partir de esa calificación se aplicó el principio de proporcionalidad: si la finalidad del sistema es avisar que una persona cayó, basta con transmitir el evento y sus metadatos, y no la imagen que lo originó. La carga útil descrita en el Listado~\ref{lst:json_alerta} se compone del identificador del dispositivo, un identificador único de evento, el identificador del incidente, el número de intento de la alerta, el tipo de evento, la marca de tiempo, el nivel de confianza del clasificador, la postura detectada y el tiempo de inactividad; ninguno de esos campos permite reconstruir la escena. Aun así, se tratan como datos personales sensibles, porque revelan un posible evento de salud: circulan solo a través del túnel cifrado que une la placa Edge con el teléfono del tutor; el plano de control de la VPN solo registra metadatos de conexión, como direcciones IP y horarios, que se declaran en el aviso de privacidad y no incluyen el contenido de las alertas. La bitácora de la aplicación conserva únicamente el registro del evento, sin imágenes, para el análisis de falsas alarmas de la fase 6 de CRISP-ML(Q).
 
 \subsection{Garantías técnicas de privacidad}
 
-El cumplimiento de los requisitos RNF-001 y RNF-IA-04 no depende de una política de uso, sino de la forma en que está construido el flujo de datos: los cuadros se capturan en memoria, se procesan en la placa Edge y se sobrescriben en cuanto se extraen los 17 puntos clave del esqueleto (Sección~\ref{sec:flujo-adquisicion}); no se escribe ningún archivo de imagen o de video en almacenamiento secundario y ningún cuadro se envía a un servicio en la nube. El único servicio externo que interviene es el plano de control de la VPN, que coordina la conexión y registra metadatos de conexión (direcciones IP y horarios), no imágenes ni el contenido de las alertas. En consecuencia, el sistema no transmite fotografías ni video en ningún caso y no puede exhibir evidencia visual de un evento, ni siquiera si el tutor la solicita; esa ausencia se declara como limitación en la Sección~\ref{sec:alcances}.
+El cumplimiento de los requisitos RNF-001 y RNF-IA-04 no depende únicamente de una política de uso, sino principalmente de la forma en que está construido el flujo de datos: los cuadros se capturan en memoria, se procesan en la placa Edge y se sobrescriben en cuanto se extraen los 17 puntos clave del esqueleto (Sección~\ref{sec:flujo-adquisicion}); no se escribe ningún archivo de imagen o de video en almacenamiento secundario y ningún cuadro se envía a un servicio en la nube. El único servicio externo que interviene es el plano de control de la VPN, que coordina la conexión y registra metadatos de conexión (direcciones IP y horarios), no imágenes ni el contenido de las alertas. En consecuencia, el sistema no transmite fotografías ni video en ningún caso y no puede exhibir evidencia visual de un evento, ni siquiera si el tutor la solicita; esa ausencia se declara como limitación en la Sección~\ref{sec:alcances}.
+
+A esas medidas de diseño se suman otras de configuración de la placa, que se comprobarán en la fase 4 de CRISP-ML(Q): desactivar el área de intercambio (\textit{swap}) del sistema operativo y los volcados de memoria (\textit{core dumps}), para que los cuadros que están en RAM no se escriban en la tarjeta microSD; ejecutar el contenedor sin volúmenes de escritura para imágenes y con un usuario sin privilegios; restringir el acceso administrativo, con SSH deshabilitado o accesible solo con llave; y ubicar la placa en un gabinete cerrado.
 
 \subsection{Alcance de la aplicación y cámaras del tutor}
 
@@ -569,12 +571,7 @@ Para lograr una comunicación altamente reactiva entre la placa de procesamiento
 \section{Desarrollo de aplicaciones móviles Android}
 Android es el sistema operativo móvil predominante basado en código abierto, cuyas capacidades nativas permiten un manejo robusto de procesos y eventos en segundo plano \parencite{uv2026desarrollo}. Al desarrollar la aplicación del tutor de forma nativa, el dispositivo móvil puede mantener un canal de suscripción persistente al \textit{broker} MQTT \parencite{mqtt2026estandar}. Para que ese canal sobreviva a la suspensión de procesos en segundo plano, la aplicación debe implementar un \textit{Foreground Service} con notificación permanente y solicitar al usuario una exclusión de la optimización de batería para la aplicación. Con ambas medidas, y sujeto a la política de administración de energía del fabricante, la aplicación puede recibir la alerta y disparar las notificaciones visuales y sonoras en cuanto el sistema de visión clasifica un accidente; ninguna de ellas garantiza por sí sola el despertar inmediato del dispositivo; en consecuencia, el tiempo de respuesta se medirá en la fase 4 de la metodología CRISP-ML(Q) contra el criterio CE-06 \parencite{uv2026desarrollo}.
 
-\subsection{Restricción de una sola VPN activa en Android}
-\label{sec:vpn-android}
-
-Android permite una sola conexión VPN activa a la vez. Cuando el tutor activa otra aplicación de VPN —por ejemplo, una VPN corporativa o de privacidad—, el sistema operativo desactiva el perfil de VPN que mantenía el túnel hacia la placa Edge, o bien impide que este se restablezca mientras la otra aplicación conserve el control. En cualquiera de los dos casos, la aplicación pierde la suscripción al \textit{broker} Mosquitto y las alertas dejan de llegar aunque la placa siga publicando. La misma restricción aplica a la configuración \textit{Always-on VPN} de Android, que solo admite un perfil activo y, si se configura para bloquear el tráfico sin VPN, puede impedir por completo la conexión de la aplicación.
-
-Esta limitación no se puede resolver desde la aplicación, porque depende del sistema operativo. Por ello, el diseño debe contemplar tres medidas: (1) detectar la pérdida del túnel mediante el estado de la interfaz de red y el \textit{keepalive} de MQTT; (2) mostrar una advertencia persistente que indique al tutor que debe desactivar cualquier otra VPN para recibir alertas; y (3) documentar la restricción en la guía de uso y en el aviso de privacidad. La disponibilidad del túnel se verificará en las pruebas de integración de la fase 4 y se reportará como una limitación de la plataforma, no como una falla del modelo.
+Android admite una sola conexión VPN activa a la vez, y sus implicaciones para el diseño se tratan en la Sección~\ref{sec:vpn-android}.
 
 % ============================================================
 \chapter{Análisis del sistema}
@@ -587,7 +584,7 @@ Esta limitación no se puede resolver desde la aplicación, porque depende del s
 En esta sección se definen las especificaciones que regulan el hardware, el software y los lineamientos de arquitectura IoT que habilitan la funcionalidad del prototipo. 
 
 \subsection{Requisitos funcionales}
-La Tabla~\ref{tab:rf-sis} especifica los requisitos funcionales que rigen la interacción entre el módulo de captura, el procesamiento local en la placa Edge, la publicación de alertas mediante el protocolo MQTT y la notificación en la aplicación móvil del tutor.
+La Tabla~\ref{tab:rf-sis} especifica los requisitos funcionales que rigen la interacción entre el módulo de captura, el procesamiento local en la placa Edge, la publicación de alertas mediante el protocolo MQTT, la notificación en la aplicación móvil del tutor y la respuesta con la que este confirma o descarta la alerta.
 \begin{table}[H]
 \centering
 \caption{Requisitos funcionales del sistema IoT y de la aplicación móvil.}
@@ -606,12 +603,14 @@ RF-003 & La placa Edge deberá publicar una alerta crítica mediante el protocol
 RF-004 & La placa Edge deberá omitir el procesamiento de notificaciones al clasificar negativamente el movimiento como una actividad cotidiana. & Alta \\
 \addlinespace
 RF-005 & La aplicación móvil del tutor deberá emitir una notificación de emergencia visual y sonora al recibir la señal MQTT del broker. & Alta \\
+\addlinespace
+RF-006 & La aplicación móvil del tutor deberá publicar la confirmación o el descarte de una alerta en el tópico de respuesta del dispositivo, y la placa Edge deberá detener las reemisiones del incidente al recibirla. & Alta \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Requisitos no funcionales}
-Con base en las características de calidad del producto definidas en el estándar internacional \textbf{ISO/IEC 25010}, se establecieron los requisitos no funcionales medibles del sistema en términos de seguridad y confidencialidad (privacidad local), adecuación funcional y fiabilidad (eficacia clasificatoria), eficiencia de desempeño (latencia de red en el \textit{broker} MQTT) y portabilidad/accesibilidad tecnológica (Tabla~\ref{tab:rnf-sis}).
+Con base en las características de calidad del producto definidas en el estándar internacional \textbf{ISO/IEC 25010}, se establecieron los requisitos no funcionales medibles del sistema en términos de seguridad y confidencialidad (privacidad local), adecuación funcional y fiabilidad (eficacia clasificatoria), eficiencia de desempeño (latencia de red en el \textit{broker} MQTT) y costo de operación; este último se incorpora como una restricción del proyecto y no corresponde a una característica de calidad de la norma (Tabla~\ref{tab:rnf-sis}).
 \begin{table}[H]
 \centering
 \caption{Requisitos no funcionales de la arquitectura e infraestructura IoT.}
@@ -627,13 +626,13 @@ RNF-002 & Eficacia & El modelo de clasificación deberá alcanzar una sensibilid
 \addlinespace
 RNF-003 & Latencia & El broker MQTT deberá entregar los mensajes de alerta con menos de 2 segundos de latencia de red para asegurar la pronta atención ante accidentes. \\
 \addlinespace
-RNF-004 & Accesibilidad & La arquitectura del sistema deberá operar sin servidores externos de pago: el procesamiento y el \textit{broker} residen en la placa Edge, y la coordinación de la VPN podrá apoyarse en un servicio gratuito. Los metadatos de conexión que este registre se declararán en el aviso de privacidad. \\
+RNF-004 & Costo & La arquitectura del sistema deberá operar sin servidores externos de pago: el procesamiento y el \textit{broker} residen en la placa Edge, y la coordinación de la VPN podrá apoyarse en un servicio gratuito. Los metadatos de conexión que este registre se declararán en el aviso de privacidad. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Casos de uso del sistema IoT}
-El flujo operativo principal obedece a un esquema transaccional de máquina a usuario, en el que el subsistema automatizado asume la responsabilidad analítica sin validaciones manuales previas. Los puntos críticos de interacción abarcan:
+El flujo operativo principal, ilustrado en la Figura~\ref{fig:casos_uso}, obedece a un esquema transaccional de máquina a usuario, en el que el subsistema automatizado asume la responsabilidad analítica sin validaciones manuales previas. Los puntos críticos de interacción abarcan:
 
 \begin{itemize}
     \item \textbf{Suministro ininterrumpido de video:} La cámara RGB (Capa de Percepción) alimenta la memoria RAM con el entorno óptico actual.
@@ -647,8 +646,6 @@ El flujo operativo principal obedece a un esquema transaccional de máquina a us
     \caption{Diagrama de casos de uso del sistema IoT.}
     \label{fig:casos_uso}
 \end{sidewaysfigure}
-
-En la Figura~\ref{fig:casos_uso} el actor se identifica únicamente como \textit{Tutor} y el caso de uso de análisis se denomina \textit{Analizar secuencia de posturas}. La nota de vinculación se interpreta conforme a la Sección~\ref{sec:mockups-app}: la etiqueta impresa contiene el identificador del dispositivo y los parámetros del canal local de aprovisionamiento, pero las credenciales y contraseñas del \textit{broker} no viajan en la etiqueta impresa.
 \newpage
 
 
@@ -801,6 +798,9 @@ Para dar solución a los requerimientos de protección de datos personales, el s
 \draw[arrow] (broker) -- node[above, font=\footnotesize, align=center] {Subscribe\\(VPN)} (vpn);
 \draw[arrow] (vpn) -- node[right, font=\footnotesize, align=center] {Alerta cifrada\\(QoS 1)} (app);
 
+% La respuesta del tutor (RF-006) regresa por el mismo túnel
+\draw[arrow] (app.east) .. controls +(3.2,0) and +(0,-2.2) .. node[pos=0.4, right, font=\footnotesize, align=center] {Publish:\\respuesta (VPN)} (broker.south);
+
 \end{tikzpicture}
 \caption{Diagrama de la arquitectura IoT con acceso remoto mediante VPN punto a punto.}
 \label{fig:arquitectura_iot}
@@ -815,25 +815,36 @@ En esta topología, el \textit{broker} Mosquitto se ejecuta en la placa Edge y s
 
 El establecimiento del túnel no depende de que el módem reenvíe un puerto UDP ni de que la vivienda tenga una dirección IP fija, condiciones incompatibles con los servicios residenciales que aplican traducción de direcciones a nivel de operador (CGNAT). En su lugar se emplea perforación automática de NAT (\textit{UDP Hole Punching}) mediante STUN/ICE, coordinada por el plano de control del servicio externo gratuito. La placa Edge y el teléfono intentan primero una ruta directa; si un NAT simétrico la impide, el tráfico se conduce por nodos de retransmisión cifrada (DERP/TURN) que reenvían paquetes ya protegidos por WireGuard y no pueden leer su contenido. Con ello la conectividad funciona en cualquier red, doméstica o de datos móviles, sin intervención del usuario, y se conserva el cumplimiento de RNF-001, RNF-003 y RNF-004: este último se satisface porque no se contrata ningún servidor de pago, aunque la coordinación se apoye en un plano de control externo gratuito.
 
-El túnel añade un sobrecosto de latencia que se medirá en la fase 4 de CRISP-ML(Q) contra el requisito RNF-003 y el criterio CE-06, tanto en la ruta directa como en la retransmitida. El \textit{broker} se mantiene atado a \texttt{wg0} en todo momento: cuando el tutor está en la misma red local, el demonio de WireGuard resuelve la ruta de forma directa sobre la LAN sin salir a internet, pero el tráfico sigue circulando por la interfaz cifrada, de modo que no existe un camino alterno sin cifrar ni una configuración distinta según la ubicación del teléfono. Cuando el tutor está fuera del domicilio, el túnel es la única vía de entrega de la alerta, lo que se declara como limitación en la Sección~\ref{sec:alcances}. La restricción de una sola VPN activa en Android se analiza en la Sección~\ref{sec:vpn-android}.
+El túnel añade un sobrecosto de latencia que se medirá en la fase 4 de CRISP-ML(Q) contra el requisito RNF-003 y el criterio CE-06, tanto en la ruta directa como en la retransmitida. El \textit{broker} se mantiene atado a \texttt{wg0} en todo momento: cuando el tutor está en la misma red local, el demonio de WireGuard resuelve la ruta de forma directa sobre la LAN sin salir a internet, pero el tráfico sigue circulando por la interfaz cifrada, de modo que no existe un camino alterno sin cifrar ni una configuración distinta según la ubicación del teléfono. Cuando el tutor está fuera del domicilio, el túnel es la única vía de entrega de la alerta, lo que se declara como limitación en la Sección~\ref{sec:alcances}. La restricción de una sola VPN activa en Android, que condiciona esa única vía de entrega, se analiza en la subsección siguiente.
+
+\subsection{Restricción de una sola VPN activa en Android}
+\label{sec:vpn-android}
+
+Android permite una sola conexión VPN activa a la vez. Cuando el tutor activa otra aplicación de VPN —por ejemplo, una VPN corporativa o de privacidad—, el sistema operativo desactiva el perfil de VPN que mantenía el túnel hacia la placa Edge, o bien impide que este se restablezca mientras la otra aplicación conserve el control. En cualquiera de los dos casos, la aplicación pierde la suscripción al \textit{broker} Mosquitto y las alertas dejan de llegar aunque la placa siga publicando. La misma restricción aplica a la configuración \textit{Always-on VPN} de Android, que solo admite un perfil activo y, si se configura para bloquear el tráfico sin VPN, puede impedir por completo la conexión de la aplicación.
+
+Esta limitación no se puede resolver desde la aplicación, porque depende del sistema operativo. Por ello, el diseño debe contemplar tres medidas: (1) detectar la pérdida del túnel mediante el estado de la interfaz de red y el \textit{keepalive} de MQTT; (2) mostrar una advertencia persistente que indique al tutor que debe desactivar cualquier otra VPN para recibir alertas; y (3) documentar la restricción en la guía de uso y en el aviso de privacidad. La disponibilidad del túnel se verificará en las pruebas de integración de la fase 4 y se reportará como una limitación de la plataforma, no como una falla del modelo.
 
 \subsection{Estructura de tópicos MQTT y formato de mensajes}
-La comunicación entre la Raspberry Pi 5 y la aplicación móvil se gestiona a través del \textit{broker} de código abierto \textbf{Eclipse Mosquitto} \parencite{mosquitto_2018} operando con nivel de calidad de servicio \textbf{QoS 1} (\textit{at least once}). Este nivel garantiza que el mensaje se entregue al menos una vez, pero no fija un tiempo máximo de entrega ni evita las repeticiones: la latencia de red menor a 2~s es una obligación independiente del requisito RNF-003 que se verifica con mediciones, y los duplicados que puede generar QoS 1 se descartan en la aplicación mediante el campo \texttt{event\_id}. Se define la siguiente estructura de tópicos:
+La comunicación entre la Raspberry Pi 5 y la aplicación móvil se gestiona a través del \textit{broker} de código abierto \textbf{Eclipse Mosquitto} \parencite{mosquitto_2018} operando con nivel de calidad de servicio \textbf{QoS 1} (\textit{at least once}). Este nivel garantiza que el mensaje se entregue al menos una vez, pero no fija un tiempo máximo de entrega ni evita las repeticiones: la latencia de red menor a 2~s es una obligación del requisito RNF-003, independiente del nivel de QoS, que se verifica con mediciones, y los duplicados que puede generar QoS 1 se descartan en la aplicación mediante el campo \texttt{event\_id}. Se define la siguiente estructura de tópicos:
 
 \begin{itemize}
     \item \texttt{alertas/caidas/\{device\_id\}}: Tópico principal en el que la placa Edge publica el evento positivo de caída y al cual permanece suscrita la aplicación móvil del tutor.
     \item \texttt{dispositivos/\{device\_id\}/estado}: Tópico destinado a reportar la disponibilidad de conexión del nodo perimetral (por ejemplo, el dispositivo \texttt{EG-014} en estado \textit{Conectado}).
+    \item \texttt{alertas/caidas/\{device\_id\}/respuesta}: Tópico en el que la aplicación publica, con QoS 1, la decisión del tutor —confirmación o descarte— acompañada del \texttt{incident\_id}, del \texttt{event\_id} atendido, de la acción y de la marca de tiempo; la placa Edge permanece suscrita a él.
 \end{itemize}
 
-El campo \texttt{event\_id} es un identificador UUID v4 que la placa genera para cada evento de caída. Como QoS 1 puede entregar el mismo mensaje más de una vez, la aplicación conserva los identificadores ya procesados y descarta las repeticiones, de modo que el tutor reciba una sola notificación por evento.
+La lista de control de acceso (\textit{ACL}) de Mosquitto solo permite a la aplicación publicar en el tópico de respuesta de su propio \texttt{device\_id}, de modo que un teléfono no puede emitir respuestas sobre un nodo que no le corresponde.
 
-Cuando el módulo de inteligencia artificial confirma una caída conforme a la regla temporal ($\Delta t \leq 2\text{ s}$ y permanencia en el suelo $N \geq 2\text{ s}$), entrega la marca de tiempo, el nivel de confianza y el identificador de evento (\textbf{RF-IA-06}) para construir la carga útil (\textit{payload}) en formato JSON que se muestra en el Listado~\ref{lst:json_alerta}.
-\newpage
+El campo \texttt{event\_id} es un identificador UUID v4 que la placa genera para cada mensaje de caída. Como QoS 1 puede entregar el mismo mensaje más de una vez, la aplicación conserva los identificadores ya procesados y descarta las repeticiones, de modo que el tutor no reciba dos veces el mismo mensaje. El campo \texttt{incident\_id} también es un UUID v4, pero lo genera el cliente MQTT de la placa en la primera alerta de una caída y lo conserva, sin cambios, en todas sus reemisiones; \texttt{attempt} es un entero que empieza en 1 y aumenta en cada reemisión. Con esos dos campos la aplicación agrupa las reemisiones de una misma caída en una sola alerta activa, en una sola entrada del historial y en un solo incidente para el análisis de falsas alarmas de la fase 6 de CRISP-ML(Q), mientras que el \texttt{event\_id} sigue siendo único por mensaje para descartar los duplicados de QoS 1.
+
+Cuando el módulo de inteligencia artificial confirma una caída conforme a la regla temporal ($\Delta t \leq 2\text{ s}$ y permanencia en el suelo $N \geq 2\text{ s}$), entrega la marca de tiempo, el nivel de confianza y el identificador de evento (\textbf{RF-IA-06}) para construir la carga útil (\textit{payload}) en formato JSON que se muestra en el Listado~\ref{lst:json_alerta}; el \texttt{incident\_id} y el \texttt{attempt} los añade el cliente MQTT de la placa al construir esa carga útil, sin modificar el formato acordado con el módulo de inteligencia artificial.
 
 \renewcommand{\lstlistingname}{Listado}
 \begin{lstlisting}[caption={Estructura del paquete JSON publicado por la Raspberry Pi 5 ante una caída detectada.}, label={lst:json_alerta}]
 {
   "event_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "incident_id": "3f8a2c47-9d1b-4e6f-8a2c-5b7d1e9f0c34",
+  "attempt": 1,
   "device_id": "EG-014",
   "event_type": "FALL_DETECTED",
   "timestamp": "2026-10-12T10:18:00Z",
@@ -846,9 +857,13 @@ Cuando el módulo de inteligencia artificial confirma una caída conforme a la r
 \subsection{Estado del dispositivo y alertas repetidas}
 \label{sec:estado-dispositivo}
 
-El tópico \texttt{dispositivos/\{device\_id\}/estado} se alimenta mediante el mecanismo \textit{Last Will and Testament} (LWT) de MQTT. Al conectarse, la placa registra en el \textit{broker} un mensaje de testamento con QoS 1 y la opción \texttt{retain} activada, por ejemplo, un objeto JSON con \texttt{device\_id}, \texttt{status} igual a \texttt{offline} y la marca de tiempo. Si la placa se apaga, pierde la conexión de red o el proceso MQTT falla sin enviar un \texttt{DISCONNECT} limpio, Mosquitto publica ese testamento en el tópico de estado y la aplicación muestra el dispositivo como \textit{Desconectado}. Mientras la conexión permanezca activa, la placa publica un latido (\textit{heartbeat}) periódico en el mismo tópico con \texttt{status} igual a \texttt{online}; el intervalo se ajusta al \texttt{keepalive} configurado en MQTT. De este modo, la aplicación distingue entre una caída y un nodo fuera de línea, y no interpreta el silencio del dispositivo como una situación normal.
+El estado del dispositivo se reporta en el tópico \texttt{dispositivos/\{device\_id\}/estado}, pero su detección principal no ocurre en la placa: como el \textit{broker} Mosquitto se ejecuta en la propia Raspberry Pi 5, cuando la placa se apaga, la vivienda pierde internet o el túnel se cae, el testamento del protocolo no puede publicarse, porque el intermediario desaparece junto con su cliente. Por ello, la aplicación móvil es la que marca el dispositivo como \textit{Desconectado}: su cliente MQTT detecta la pérdida de conexión con el \textit{broker} cuando deja de recibir la respuesta \texttt{PINGRESP} a sus mensajes de \textit{keepalive} (\texttt{PINGREQ}), o cuando el sistema operativo notifica la caída de la interfaz del túnel; con ello quedan cubiertos la placa apagada, la pérdida de internet en la vivienda, el túnel caído y el conflicto con otra VPN (Sección~\ref{sec:vpn-android}).
 
-Para evitar una ráfaga de notificaciones cuando la persona permanece en el suelo y el tutor no responde, la placa aplica una lógica de retardo (\textit{cooldown}) después de publicar la primera alerta. Si el evento no recibe confirmación ni descarte desde la aplicación y la postura \textit{caído} persiste, la placa espera un intervalo configurable, con un valor inicial propuesto de 60~s, antes de volver a publicar. Cada reemisión se envía con un nuevo \texttt{event\_id}, de modo que la aplicación la presenta como una alerta nueva y no la confunde con un duplicado de QoS 1. El \textit{cooldown} no modifica la regla temporal de detección ni el criterio CE-06, que se aplica a la primera alerta; su valor se ajustará en la fase 4 con el tutor y se documentará en la configuración del sistema.
+El mecanismo \textit{Last Will and Testament} (LWT) se conserva con QoS 1 y la opción \texttt{retain} activada, pero limitado al caso en que el proceso de detección falla mientras el \textit{broker} sigue vivo: al conectarse, ese proceso registra un testamento con \texttt{status} igual a \texttt{offline} y, si se cierra sin enviar un \texttt{DISCONNECT} limpio, Mosquitto lo publica en el tópico de estado. Al establecerse la conexión, el proceso publica además un mensaje retenido con \texttt{status} igual a \texttt{online}, que sustituye al testamento anterior y restablece el estado del nodo.
+
+El latido (\textit{heartbeat}) se publica desde el propio bucle de detección y no solo desde la biblioteca MQTT, de modo que cada iteración del procesamiento confirma que el proceso sigue avanzando. El intervalo del latido se ajusta al \texttt{keepalive} configurado en MQTT, y la aplicación marca el dispositivo como fuera de línea cuando deja de recibir latidos durante un número configurable de intervalos, aunque la conexión TCP permanezca abierta; así se detecta también el caso del proceso colgado que ha dejado de publicar latidos. De este modo, la aplicación distingue entre una caída y un nodo fuera de línea, y no interpreta el silencio del dispositivo como una situación normal.
+
+Para evitar una ráfaga de notificaciones cuando la persona permanece en el suelo y el tutor no responde, la placa aplica una lógica de retardo (\textit{cooldown}) después de publicar la primera alerta. La placa permanece suscrita al tópico de respuesta y detiene las reemisiones en cuanto recibe un mensaje con el \texttt{incident\_id} del evento en curso, ya sea una confirmación o un descarte; también deja de reemitir cuando la postura \textit{caído} deja de persistir. Mientras no reciba esa respuesta y la postura se mantenga, espera un intervalo configurable, con un valor inicial propuesto de 60~s, antes de volver a publicar. Cada reemisión conserva el \texttt{incident\_id} y aumenta \texttt{attempt} en uno, de modo que la aplicación la agrupa con el incidente ya abierto en lugar de presentarla como una alerta distinta, y el nuevo \texttt{event\_id} evita que se confunda con un duplicado de QoS 1. El \textit{cooldown} no modifica la regla temporal de detección ni el criterio CE-06, que se aplica a la primera alerta; su valor se ajustará en la fase 4 con el tutor y se documentará en la configuración del sistema.
 
 \subsection{Modelado de los flujos de alerta}
 El comportamiento operativo del sistema ante la evaluación continua de secuencias de posturas se modela en tres flujos de decisión (Figura~\ref{fig:flujos_alerta}):
@@ -856,12 +871,14 @@ El comportamiento operativo del sistema ante la evaluación continua de secuenci
 \begin{enumerate}
     \item \textbf{Flujo sin caída (actividad de la vida diaria):} Si el clasificador de posturas y la regla temporal determinan que la secuencia corresponde a una actividad cotidiana (caminar, sentarse, acostarse voluntariamente o agacharse momentáneamente por menos de $N$ segundos), la placa Edge omite cualquier publicación en red (\textbf{RF-004}), descarta los datos intermedios y continúa con el ciclo de adquisición.
     \item \textbf{Flujo de caída detectada:} Si se detecta una transición de \textit{de pie} o \textit{sentado} a \textit{caído} en un tiempo $\Delta t \leq 2\text{ s}$ seguida de al menos $N = 2\text{ s}$ en postura \textit{caído}, el módulo de IA emite el evento (\textbf{RF-IA-06}). El cliente MQTT de la placa publica el objeto JSON en el \textit{broker} Mosquitto (\textbf{RF-003}), el cual lo entrega de inmediato a la aplicación móvil para activar la alarma visual y sonora (\textbf{RF-005}) dentro de un tiempo total de extremo a extremo $\leq 8\text{ s}$ (\textbf{CE-06}).
-    \item \textbf{Flujo de confirmación o descarte del tutor:} Al desplegarse la pantalla de alerta crítica en la aplicación móvil, el tutor evalúa la situación del adulto mayor y selecciona una de dos rutas:
+    \item \textbf{Flujo de confirmación o descarte del tutor:} Al desplegarse la pantalla de alerta crítica en la aplicación móvil, el tutor evalúa la situación del adulto mayor y selecciona una de dos rutas; en ambas, la aplicación publica la respuesta en el tópico de respuesta del dispositivo (\textbf{RF-006}) y la registra en la bitácora:
     \begin{itemize}
-        \item \textit{Confirmación de emergencia:} El tutor presiona \texttt{LLAMAR AL 911} para solicitar asistencia médica inmediata y el incidente queda asentado como alerta confirmada en la bitácora.
-        \item \textit{Descarte por falsa alarma:} Si el tutor verifica que el adulto mayor se encuentra bien, presiona \texttt{Falsa Alarma}, silenciando la notificación y registrando el evento descartado en el historial para su análisis en la Fase 6 de CRISP-ML(Q).
+        \item \textit{Confirmación de emergencia:} El tutor presiona \texttt{LLAMAR AL 911} para solicitar asistencia médica inmediata, la aplicación publica la confirmación (\textbf{RF-006}) y el incidente queda asentado como alerta confirmada en la bitácora.
+        \item \textit{Descarte por falsa alarma:} Si el tutor verifica que el adulto mayor se encuentra bien, presiona \texttt{Falsa Alarma}, silencia la notificación, publica el descarte en el tópico de respuesta (\textbf{RF-006}) y registra el evento descartado en el historial para su análisis en la Fase 6 de CRISP-ML(Q).
     \end{itemize}
 \end{enumerate}
+
+En los dos casos, la respuesta recibida por la placa detiene las reemisiones del incidente (Sección~\ref{sec:estado-dispositivo}); si el tutor no responde antes de que venza el intervalo de \textit{cooldown} y la postura \textit{caído} persiste, la placa reemite la alerta con el mismo \texttt{incident\_id} y un \texttt{attempt} mayor.
 
 \begin{figure}[htbp]
 \centering
@@ -882,21 +899,29 @@ El comportamiento operativo del sistema ante la evaluación continua de secuenci
 
 \node[alert, below=0.7cm of dec1] (pub) {\textbf{Flujo de caída (RF-003)}\\Publica JSON en Mosquitto\\Notificación en aplicación móvil};
 
-\node[decision, below=of pub] (dec2) {Validación\\del tutor};
+\node[decision, below=0.8cm of pub] (dec3) {¿Respuesta del tutor\\antes del cooldown?};
+\node[process, right=1.0cm of dec3] (reem) {\textbf{Reemisión (cooldown)}\\mismo \texttt{incident\_id},\\\texttt{attempt}$+1$ si el caído persiste};
 
-\node[alert, below left=0.6cm and 0.4cm of dec2] (conf) {\textbf{Confirmación}\\Llamada al 911\\Registro de incidente};
-\node[okblock, below right=0.6cm and 0.4cm of dec2] (desc) {\textbf{Descarte (Falsa Alarma)}\\Cierra alerta activa\\Registro en bitácora (Fase 6)};
+\node[alert, below left=0.9cm and 1.2cm of dec3] (conf) {\textbf{Confirmación}\\Llamada al 911\\Registro de incidente};
+\node[okblock, below right=0.9cm and 1.2cm of dec3] (desc) {\textbf{Descarte (Falsa Alarma)}\\Cierra alerta activa\\Registro en bitácora (Fase 6)};
+
+\node[process, below=3.5cm of dec3] (resp) {\textbf{Publica respuesta (RF-006)}\\Confirmación o descarte\\en el tópico de respuesta};
 
 \draw[arrow] (seq) -- (dec1);
 \draw[arrow] (dec1) -- node[above] {No (ADL)} (nocai);
 \draw[arrow] (nocai.north) |- (seq.east);
 \draw[arrow] (dec1) -- node[left] {Sí} (pub);
-\draw[arrow] (pub) -- (dec2);
-\draw[arrow] (dec2.west) -| node[above left] {Emergencia} (conf.north);
-\draw[arrow] (dec2.east) -| node[above right] {Está bien} (desc.north);
+\draw[arrow] (pub) -- (dec3);
+\draw[arrow] (dec3.east) -- node[above] {No} (reem.west);
+\draw[arrow] (reem.north) |- (pub.east);
+\draw[arrow] (dec3.south) -- ++(0,-0.5) -| node[above left, pos=0.6] {Emergencia} (conf.north);
+\draw[arrow] (dec3.south) -- ++(0,-0.5) -| node[above right, pos=0.6] {Está bien} (desc.north);
+\draw[arrow] (conf.south) |- ([xshift=-1.5cm]resp.north);
+\draw[arrow] (desc.south) |- ([xshift=1.5cm]resp.north);
+\draw[arrow, dashed] (resp.east) -- ++(6.0,0) |- node[below, pos=0.9, align=center] {detiene las\\reemisiones} (reem.south);
 
 \end{tikzpicture}
-\caption{Diagrama de los flujos de decisión del sistema: sin caída, caída detectada y confirmación o descarte del tutor.}
+\caption{Diagrama de los flujos de decisión del sistema: sin caída, caída detectada con reemisión por \textit{cooldown} y confirmación o descarte del tutor.}
 \label{fig:flujos_alerta}
 \end{figure}
 
@@ -930,7 +955,7 @@ Orange Pi 5 (8~GB) & 4 Cortex-A76 y 4 Cortex-A55; GPU Mali-G610 & NPU, 6 TOPS & 
 
 Los datos técnicos de la Tabla~\ref{tab:comparativa-placas} provienen de las hojas de datos y de los sitios oficiales de cada fabricante \parencite{raspberrypi2026pi5,raspberrypi2026pi4,nvidia2026jetson,coral2026devboard,orangepi2026pi5}. Los costos son estimaciones a partir de los precios de lista de cada fabricante y de los ajustes de precio anunciados durante 2026, por lo que se emplean solo como orden de magnitud \parencite{raspberrypi2026precios}.
 
-\paragraph{Raspberry Pi 5.} Se adopta la variante con 8~GB de memoria, que integra un procesador Broadcom BCM2712 de cuatro núcleos Arm Cortex-A76 a 2,4~GHz, memoria LPDDR4X, una GPU VideoCore VII, un puerto PCIe 2.0, dos conectores MIPI para cámara y pantalla, Ethernet Gigabit, Wi-Fi de doble banda, Bluetooth 5.0 y 40 pines de propósito general \parencite{raspberrypi2026pi5}. La placa no incluye una unidad de procesamiento neuronal, de modo que la inferencia se ejecuta en la CPU; esto es viable porque YOLO26 se diseñó para dispositivos de borde y puede exportarse a ONNX, TensorRT, TFLite o OpenVINO con cuantización de 8 bits \parencite{sapkota2025yolo26}. Si en la fase 3 de CRISP-ML(Q) la tasa de procesamiento no alcanza el criterio CE-05, el mismo puerto PCIe permite añadir un acelerador Hailo-8L de 13 TOPS sin cambiar de plataforma \parencite{raspberrypi2026aihat}. La variante de 8~GB se prefiere sobre las de 2 y 4~GB para dejar margen al sistema operativo, al contenedor de Docker, a OpenCV y al cliente MQTT, en cumplimiento del requisito RNF-IA-03, y se alimenta con la fuente oficial USB-C de 5,1~V y 5~A (27~W) que cubre el consumo de la cámara y de la interfaz de red.
+\paragraph{Raspberry Pi 5.} Se adopta la variante con 8~GB de memoria, que integra un procesador Broadcom BCM2712 de cuatro núcleos Arm Cortex-A76 a 2,4~GHz, memoria LPDDR4X, una GPU VideoCore VII, un puerto PCIe 2.0, dos conectores MIPI para cámara y pantalla, Ethernet Gigabit, Wi-Fi de doble banda, Bluetooth 5.0 y 40 pines de propósito general \parencite{raspberrypi2026pi5}. La placa no incluye una unidad de procesamiento neuronal, de modo que la inferencia se ejecuta en la CPU; esto es viable porque YOLO26 se diseñó para dispositivos de borde y puede exportarse a formatos adecuados para la CPU Arm de la placa, como NCNN u ONNX, con cuantización de 8 bits \parencite{sapkota2025yolo26,ultralytics2026rpi}, mientras que las exportaciones a TensorRT no aplican en este caso porque requieren una GPU NVIDIA. Si en la fase 3 de CRISP-ML(Q) la tasa de procesamiento no alcanza el criterio CE-05, el mismo puerto PCIe permite añadir un acelerador Hailo-8L de 13 TOPS sin cambiar de plataforma \parencite{raspberrypi2026aihat}. La variante de 8~GB se prefiere sobre las de 2 y 4~GB para dejar margen al sistema operativo, al contenedor de Docker, a OpenCV y al cliente MQTT, en cumplimiento del requisito RNF-IA-03, y se alimenta con la fuente oficial USB-C de 5,1~V y 5~A (27~W) que cubre el consumo de la cámara y de la interfaz de red.
 
 \paragraph{Alternativas descartadas.} La Raspberry Pi 4 tiene un costo menor, pero su procesador Cortex-A72 de cuatro núcleos a 1,5~GHz es de una generación anterior al Cortex-A76 de la Raspberry Pi 5, carece de PCIe y no ofrece una ruta de ampliación si el modelo no alcanza la tasa requerida \parencite{raspberrypi2026pi4}; la diferencia de precio no compensa el menor desempeño. La Jetson Orin Nano Super es la opción más potente del conjunto, con hasta 67 TOPS en su GPU Ampere y 8~GB de memoria LPDDR5 \parencite{nvidia2026jetson}, pero cuesta 249~USD, alrededor del doble de la Raspberry Pi 5 de 8~GB, consume hasta 25~W y su capacidad excede lo que necesita un modelo compacto que solo debe procesar entre 5 y 7 cuadros por segundo. La Coral Dev Board integra una Edge TPU de 4 TOPS con bajo consumo y está disponible también en una variante de 4~GB de memoria, por lo que la capacidad de memoria no es el motivo de su descarte; el obstáculo es la compatibilidad de operaciones, ya que la Edge TPU solo ejecuta modelos TFLite cuantizados por completo a enteros de 8 bits y no admite todas las operaciones de las redes de detección y estimación de pose, de modo que las capas no soportadas deben volver a implementarse o ejecutarse en la CPU, lo que anula la ventaja del acelerador \parencite{coral2026devboard}. A ello se suma que su suministro y soporte se han reducido. Por último, la Orange Pi 5 ofrece un procesador RK3588S con una NPU de 6 TOPS y un precio menor, pero su acelerador requiere la cadena de herramientas RKNN y su documentación y comunidad son más reducidas, lo que añade riesgo técnico a un proyecto con calendario fijo \parencite{orangepi2026pi5}.
 
@@ -943,7 +968,7 @@ El flujo de adquisición de video parametriza la captura óptica en la Raspberry
 
 \begin{itemize}
     \item \textbf{Interfaz de captura y resolución de entrada:} La captura se realiza con una cámara web USB convencional, que entrega video RGB y se conecta por ese puerto a la Raspberry Pi 5. Aunque el sensor puede operar a 1080p, la resolución de captura se fija en $640 \times 480$ píxeles (relación de aspecto 4:3) mediante las propiedades \texttt{CAP\_PROP\_FRAME\_WIDTH} y \texttt{CAP\_PROP\_FRAME\_HEIGHT} de OpenCV, de modo que es la propia cámara la que entrega cada cuadro ya en el tamaño de entrada del modelo \texttt{YOLO26-pose}. Con ello se evita el redimensionamiento por cuadro: capturar a 1080p y reducir después obligaría a mover y volver a escalar más de dos millones de píxeles en cada iteración, lo que consumiría CPU y memoria de la placa sin aportar información útil al modelo y comprometería la tasa de procesamiento de CE-05. Al iniciar el flujo se comprueba la resolución realmente negociada con el controlador; si el dispositivo no admite el modo solicitado y entrega otro, se registra el valor efectivo y solo entonces se aplica un escalado de contingencia. El lado mayor del cuadro coincide así con la dimensión de entrada del modelo y la etapa de acondicionamiento se limita a la conversión de espacio de color.
-    \item \textbf{Tasa de cuadros por segundo (FPS):} El flujo de adquisición se regula a una tasa de captura sostenida de $5$ a $7\text{ FPS}$, garantizando una frecuencia de procesamiento en la placa superior al umbral mínimo establecido en los criterios de éxito (\textbf{CE-05}: $\geq 5\text{ FPS}$). Esta frecuencia temporal permite capturar con suficiente granularidad el descenso rápido del cuerpo durante una caída (intervalo $\Delta t \leq 2\text{ s}$) sin saturar la cola de lectura.
+    \item \textbf{Tasa de cuadros por segundo (FPS):} El flujo de adquisición se regula a una tasa de captura sostenida de $5$ a $7\text{ FPS}$, garantizando una frecuencia de procesamiento en la placa superior al umbral mínimo establecido en los criterios de éxito (\textbf{CE-05}: $\geq 5\text{ FPS}$). Esta frecuencia temporal permite capturar con suficiente granularidad el descenso rápido del cuerpo durante una caída (intervalo $\Delta t \leq 2\text{ s}$) sin saturar la cola de lectura. El tope de captura se explica porque la estimación de 8 a 12~FPS presentada en la sección \enquote{Modelo de estimación de pose} corresponde solo a la inferencia de pose, mientras que la placa también ejecuta el clasificador de posturas, la regla temporal, el cliente MQTT, el túnel WireGuard y el sistema operativo; limitar la captura deja margen de CPU, reduce el calentamiento y el riesgo de reducción térmica de frecuencia, y con 5~FPS una transición de 2~s ya ofrece al menos 10 cuadros. El valor definitivo se fijará con mediciones en la fase 3 de CRISP-ML(Q).
     \item \textbf{Formato de los cuadros en memoria (acuerdo con el módulo de IA):} La biblioteca OpenCV decodifica cada cuadro de la cámara como un arreglo matricial tridimensional de 8 bits por canal ($\texttt{uint8}$, con valores de intensidad entre $0$ y $255$) en orden de canales \texttt{BGR}. Antes de entregarse al modelo de estimación de pose, el arreglo se transforma en memoria RAM al espacio de color \texttt{RGB} con dimensiones $H \times W \times 3$.
     \item \textbf{Gestión de memoria volátil y privacidad:} En cumplimiento con los requisitos \textbf{RNF-001} y \textbf{RNF-IA-04}, no se realiza escritura de archivos de imagen ni de video en almacenamiento secundario. Se utiliza un búfer de lectura de un solo cuadro (\textit{single-frame buffer}) para descartar cuadros rezagados y procesar únicamente el instante actual; una vez extraídos los 17 puntos clave del esqueleto, el tensor de imagen se sobrescribe de inmediato en la memoria RAM.
 \end{itemize}
@@ -1184,8 +1209,8 @@ Una vez configurado el dispositivo, la operación cotidiana y la atención de in
     \item \textbf{Panel principal de dispositivos conectados (Figura~\ref{fig:mockup4}):} Muestra el estado de enlace en tiempo real del nodo \texttt{EG-014} (\textit{Conectado}) asociado a \textit{Abuelo José}, reiterando la ausencia de transmisión de video y dando acceso directo a la adición de nuevos dispositivos y a la consulta del historial. El nombre \textit{Abuelo José} es un apodo local del adulto mayor configurado en el teléfono; no corresponde a una cuenta ni a una identidad de usuario. Por la misma razón, el saludo del panel no incluye un nombre de usuario: cualquier nombre que aparezca en la interfaz es un apodo local y no una identidad de cuenta.
     \item \textbf{Pantalla de notificación crítica y validación/descarte (Figura~\ref{fig:mockup5}):} Al recibir un mensaje JSON de caída desde el \textit{broker} Mosquitto (\textbf{RF-003}, \textbf{RF-005}), la aplicación móvil despliega una alerta visual y sonora de alto contraste indicando \textit{``Posible caída detectada''}, el perfil afectado, el identificador del nodo (\texttt{EG-014}) y la hora del evento. La interfaz presenta dos acciones excluyentes para la validación humana:
     \begin{itemize}
-        \item \textbf{Confirmar emergencia (\texttt{LLAMAR AL 911}):} Botón principal de alto contraste que inicia la llamada a los servicios de emergencia cuando el tutor confirma el accidente o no logra comunicarse con el adulto mayor.
-        \item \textbf{Descartar evento (\texttt{Falsa Alarma}):} Acción secundaria que permite cerrar la alerta únicamente después de que el tutor verificó que el adulto mayor se encuentra bien.
+        \item \textbf{Confirmar emergencia (\texttt{LLAMAR AL 911}):} Botón principal de alto contraste que inicia la llamada a los servicios de emergencia cuando el tutor confirma el accidente o no logra comunicarse con el adulto mayor; al confirmar, la aplicación publica la respuesta en el tópico de respuesta del dispositivo (\textbf{RF-006}).
+        \item \textbf{Descartar evento (\texttt{Falsa Alarma}):} Acción secundaria que permite cerrar la alerta únicamente después de que el tutor verificó que el adulto mayor se encuentra bien; al descartar, la aplicación publica la respuesta en el tópico de respuesta del dispositivo (\textbf{RF-006}).
     \end{itemize}
     \item \textbf{Historial y estado de los eventos (Figura~\ref{fig:mockup6}):} Registra cronológicamente la bitácora de actividad en la aplicación móvil mediante filtros por categoría (\textit{Todos}, \textit{Alerta resuelta}, \textit{Informativo}). Documenta tanto los eventos de conexión como la resolución de las alertas; la primera entrada se rotula \textit{``Dispositivo vinculado''} al completar el emparejamiento, sin eventos de creación de cuentas ni de incorporación de identidades, y la resolución se registra sin nombre de usuario, por ejemplo, \textit{``El tutor confirmó que el adulto mayor está bien. Falsa alarma registrada a las 10:21''}. Estos registros proporcionan los datos necesarios para el análisis de falsos positivos contemplado en la Fase 6 de la metodología CRISP-ML(Q).
 \end{enumerate}
