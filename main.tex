@@ -762,7 +762,7 @@ Para dar solución a los requerimientos de protección de datos personales, el s
     \item \textbf{Capa de Percepción:} Integrada por un nodo sensor visual (cámara RGB) conectado por USB al dispositivo local, asegurando un suministro de imágenes ininterrumpido y exento de latencias de transmisión sobre red de área local (LAN).
     \item \textbf{Capa de Cómputo Edge:} Compuesta por una Raspberry Pi 5 que actúa como placa Edge perimetral, donde reside el módulo de inferencia de YOLO26. Esta capa delimita la \enquote{zona cero} de privacidad: procesa cada tensor visual, extrae la pose y destruye de inmediato las imágenes crudas directamente en memoria, impidiendo que material visual privado abandone el dispositivo.
     \item \textbf{Capa de Mensajería:} Representada por el servidor ligero Mosquitto MQTT \parencite{mqtt2026estandar}, que se ejecuta en la propia placa Edge. Esta capa aísla la carga pesada (la imagen) de la carga liviana (el metadato de alerta) y rutea los mensajes JSON hacia el túnel VPN punto a punto de forma instantánea tras clasificar exitosamente un riesgo de caída.
-    \item \textbf{Capa de Aplicación:} Compuesta por un terminal móvil inteligente dotado de la aplicación nativa en Android \parencite{uv2026desarrollo}, el cual se suscribe al tópico MQTT a través del túnel VPN punto a punto, sin importar si el tutor se encuentra dentro o fuera del domicilio, habilitando al usuario final en tiempo real.
+    \item \textbf{Capa de Aplicación:} Compuesta por un terminal móvil inteligente dotado de la aplicación nativa en Android \parencite{uv2026desarrollo}, el cual se suscribe al tópico de alertas y publica la respuesta del tutor en el tópico de respuesta (\textbf{RF-006}) a través del túnel VPN punto a punto, sin importar si el tutor se encuentra dentro o fuera del domicilio, habilitando al usuario final en tiempo real.
 \end{enumerate}
 \begin{figure}[H]
 \centering
@@ -799,7 +799,8 @@ Para dar solución a los requerimientos de protección de datos personales, el s
 \draw[arrow] (vpn) -- node[right, font=\footnotesize, align=center] {Alerta cifrada\\(QoS 1)} (app);
 
 % La respuesta del tutor (RF-006) regresa por el mismo túnel
-\draw[arrow] (app.east) .. controls +(3.2,0) and +(0,-2.2) .. node[pos=0.4, right, font=\footnotesize, align=center] {Publish:\\respuesta (VPN)} (broker.south);
+% Trazo ortogonal a la altura de la app para no cruzar la etiqueta de la alerta
+\draw[arrow] (app.east) -| node[pos=0.25, below, font=\footnotesize, align=center] {Publish: respuesta\\(VPN, RF-006)} (broker.south);
 
 \end{tikzpicture}
 \caption{Diagrama de la arquitectura IoT con acceso remoto mediante VPN punto a punto.}
@@ -900,12 +901,14 @@ En los dos casos, la respuesta recibida por la placa detiene las reemisiones del
 \node[alert, below=0.7cm of dec1] (pub) {\textbf{Flujo de caída (RF-003)}\\Publica JSON en Mosquitto\\Notificación en aplicación móvil};
 
 \node[decision, below=0.8cm of pub] (dec3) {¿Respuesta del tutor\\antes del cooldown?};
-\node[process, right=1.0cm of dec3] (reem) {\textbf{Reemisión (cooldown)}\\mismo \texttt{incident\_id},\\\texttt{attempt}$+1$ si el caído persiste};
+\node[process, right=1.2cm of dec3] (reem) {\textbf{Reemisión (cooldown)}\\mismo \texttt{incident\_id},\\\texttt{attempt}$+1$ si el caído persiste};
 
-\node[alert, below left=0.9cm and 1.2cm of dec3] (conf) {\textbf{Confirmación}\\Llamada al 911\\Registro de incidente};
-\node[okblock, below right=0.9cm and 1.2cm of dec3] (desc) {\textbf{Descarte (Falsa Alarma)}\\Cierra alerta activa\\Registro en bitácora (Fase 6)};
+% Ramas del tutor: centradas a 2,3 cm del eje para quedar dentro del ancho de (resp)
+\node[alert, below=1.6cm of dec3, xshift=-2.3cm] (conf) {\textbf{Confirmación}\\Llamada al 911\\Registro de incidente};
+\node[okblock, below=1.6cm of dec3, xshift=2.3cm] (desc) {\textbf{Descarte (Falsa Alarma)}\\Cierra alerta activa\\Registro en bitácora (Fase 6)};
 
-\node[process, below=3.5cm of dec3] (resp) {\textbf{Publica respuesta (RF-006)}\\Confirmación o descarte\\en el tópico de respuesta};
+% Nodo ancho para recibir ambas ramas con flechas verticales
+\node[process, minimum width=7.6cm, below=1.0cm of desc.south, anchor=north, xshift=-2.3cm] (resp) {\textbf{Publica respuesta (RF-006)}\\Confirmación o descarte en el tópico de respuesta};
 
 \draw[arrow] (seq) -- (dec1);
 \draw[arrow] (dec1) -- node[above] {No (ADL)} (nocai);
@@ -914,11 +917,13 @@ En los dos casos, la respuesta recibida por la placa detiene las reemisiones del
 \draw[arrow] (pub) -- (dec3);
 \draw[arrow] (dec3.east) -- node[above] {No} (reem.west);
 \draw[arrow] (reem.north) |- (pub.east);
-\draw[arrow] (dec3.south) -- ++(0,-0.5) -| node[above left, pos=0.6] {Emergencia} (conf.north);
-\draw[arrow] (dec3.south) -- ++(0,-0.5) -| node[above right, pos=0.6] {Está bien} (desc.north);
-\draw[arrow] (conf.south) |- ([xshift=-1.5cm]resp.north);
-\draw[arrow] (desc.south) |- ([xshift=1.5cm]resp.north);
-\draw[arrow, dashed] (resp.east) -- ++(6.0,0) |- node[below, pos=0.9, align=center] {detiene las\\reemisiones} (reem.south);
+\draw[thick, draw=black!80] (dec3.south) -- node[right] {Sí} ++(0,-0.6) coordinate (split);
+\draw[arrow] (split) -| node[above, pos=0.25] {Emergencia} (conf.north);
+\draw[arrow] (split) -| node[above, pos=0.25] {Está bien} (desc.north);
+\draw[arrow] (conf.south) -- (conf.south |- resp.north);
+\draw[arrow] (desc.south) -- (desc.south |- resp.north);
+% La respuesta rodea el nodo de descarte por la derecha y llega a la reemisión
+\draw[arrow, dashed] (resp.east) -| node[right, pos=0.75, align=left] {detiene las\\reemisiones} (reem.south);
 
 \end{tikzpicture}
 \caption{Diagrama de los flujos de decisión del sistema: sin caída, caída detectada con reemisión por \textit{cooldown} y confirmación o descarte del tutor.}
@@ -968,7 +973,7 @@ El flujo de adquisición de video parametriza la captura óptica en la Raspberry
 
 \begin{itemize}
     \item \textbf{Interfaz de captura y resolución de entrada:} La captura se realiza con una cámara web USB convencional, que entrega video RGB y se conecta por ese puerto a la Raspberry Pi 5. Aunque el sensor puede operar a 1080p, la resolución de captura se fija en $640 \times 480$ píxeles (relación de aspecto 4:3) mediante las propiedades \texttt{CAP\_PROP\_FRAME\_WIDTH} y \texttt{CAP\_PROP\_FRAME\_HEIGHT} de OpenCV, de modo que es la propia cámara la que entrega cada cuadro ya en el tamaño de entrada del modelo \texttt{YOLO26-pose}. Con ello se evita el redimensionamiento por cuadro: capturar a 1080p y reducir después obligaría a mover y volver a escalar más de dos millones de píxeles en cada iteración, lo que consumiría CPU y memoria de la placa sin aportar información útil al modelo y comprometería la tasa de procesamiento de CE-05. Al iniciar el flujo se comprueba la resolución realmente negociada con el controlador; si el dispositivo no admite el modo solicitado y entrega otro, se registra el valor efectivo y solo entonces se aplica un escalado de contingencia. El lado mayor del cuadro coincide así con la dimensión de entrada del modelo y la etapa de acondicionamiento se limita a la conversión de espacio de color.
-    \item \textbf{Tasa de cuadros por segundo (FPS):} El flujo de adquisición se regula a una tasa de captura sostenida de $5$ a $7\text{ FPS}$, garantizando una frecuencia de procesamiento en la placa superior al umbral mínimo establecido en los criterios de éxito (\textbf{CE-05}: $\geq 5\text{ FPS}$). Esta frecuencia temporal permite capturar con suficiente granularidad el descenso rápido del cuerpo durante una caída (intervalo $\Delta t \leq 2\text{ s}$) sin saturar la cola de lectura. El tope de captura se explica porque la estimación de 8 a 12~FPS presentada en la sección \enquote{Modelo de estimación de pose} corresponde solo a la inferencia de pose, mientras que la placa también ejecuta el clasificador de posturas, la regla temporal, el cliente MQTT, el túnel WireGuard y el sistema operativo; limitar la captura deja margen de CPU, reduce el calentamiento y el riesgo de reducción térmica de frecuencia, y con 5~FPS una transición de 2~s ya ofrece al menos 10 cuadros. El valor definitivo se fijará con mediciones en la fase 3 de CRISP-ML(Q).
+    \item \textbf{Tasa de cuadros por segundo (FPS):} El flujo de adquisición se regula a una tasa de captura sostenida de $5$ a $7\text{ FPS}$, garantizando una frecuencia de procesamiento en la placa no inferior al umbral mínimo establecido en los criterios de éxito (\textbf{CE-05}: $\geq 5\text{ FPS}$). Esta frecuencia temporal permite capturar con suficiente granularidad el descenso rápido del cuerpo durante una caída (intervalo $\Delta t \leq 2\text{ s}$) sin saturar la cola de lectura. El tope de captura se explica porque la estimación de 8 a 12~FPS presentada en la Sección~\ref{sec:diseno-modelo} corresponde solo a la inferencia de pose, mientras que la placa también ejecuta el clasificador de posturas, la regla temporal, el cliente MQTT, el túnel WireGuard y el sistema operativo; limitar la captura deja margen de CPU, reduce el calentamiento y el riesgo de reducción térmica de frecuencia, y con 5~FPS una transición de 2~s ya ofrece al menos 10 cuadros. El valor definitivo se fijará con mediciones en la fase 3 de CRISP-ML(Q).
     \item \textbf{Formato de los cuadros en memoria (acuerdo con el módulo de IA):} La biblioteca OpenCV decodifica cada cuadro de la cámara como un arreglo matricial tridimensional de 8 bits por canal ($\texttt{uint8}$, con valores de intensidad entre $0$ y $255$) en orden de canales \texttt{BGR}. Antes de entregarse al modelo de estimación de pose, el arreglo se transforma en memoria RAM al espacio de color \texttt{RGB} con dimensiones $H \times W \times 3$.
     \item \textbf{Gestión de memoria volátil y privacidad:} En cumplimiento con los requisitos \textbf{RNF-001} y \textbf{RNF-IA-04}, no se realiza escritura de archivos de imagen ni de video en almacenamiento secundario. Se utiliza un búfer de lectura de un solo cuadro (\textit{single-frame buffer}) para descartar cuadros rezagados y procesar únicamente el instante actual; una vez extraídos los 17 puntos clave del esqueleto, el tensor de imagen se sobrescribe de inmediato en la memoria RAM.
 \end{itemize}
