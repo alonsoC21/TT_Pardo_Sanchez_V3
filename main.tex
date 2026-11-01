@@ -1694,4 +1694,221 @@ Una vez configurado el dispositivo, la operación cotidiana y la atención de in
 \backmatter
 \printbibliography[heading=bibintoc,title={Referencias}]
 
+% =====================================================================
+%  ANEXOS =====================================================================
+
+% ---------- Datos editables del responsable ----------
+\providecommand{\correoAviso}{\textbf{[correo de contacto del proyecto]}}
+\providecommand{\domicilioAviso}{Escuela Superior de Cómputo del IPN, Av.~Juan de Dios Bátiz s/n, esquina Av.~Miguel Othón de Mendizábal, Col.~Lindavista, Alcaldía Gustavo A.~Madero, C.P.~07738, Ciudad de México}
+
+% ---------- Utilidades para el contrato ----------
+\providecommand{\campo}[1][6cm]{\rule{#1}{0.4pt}}
+\providecommand{\casilla}{\fbox{\rule{0pt}{0.5em}\rule{0.5em}{0pt}}}
+\providecommand{\bloqueFirma}[2]{%
+  \begin{minipage}[t]{0.46\textwidth}\centering
+    \vspace{1.8cm}
+    \rule{\linewidth}{0.4pt}\\[2pt]
+    #1\\
+    {\small #2}
+  \end{minipage}}
+
+\cleardoublepage
+\chapter*{Anexos}
+\addcontentsline{toc}{chapter}{Anexos}
+\markboth{Anexos}{Anexos}
+\setcounter{section}{0}
+\setcounter{table}{0}
+\renewcommand{\thesection}{\Alph{section}}
+\renewcommand{\thetable}{\thesection.\arabic{table}}
+
+% =====================================================================
+\section{Aviso de privacidad integral}
+\label{anx:aviso}
+% =====================================================================
+
+\begin{center}
+\textbf{Aviso de privacidad integral del prototipo ElderGuard}\\
+Trabajo Terminal No.~2027-A083\\
+{\small Última actualización: noviembre de 2026}
+\end{center}
+
+El presente aviso se emite conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares~\cite{LFPDPPP} y se entrega, en papel, a la persona adulta mayor antes de instalar la cámara; también se presenta al tutor en la aplicación móvil durante la vinculación del dispositivo. El consentimiento para el tratamiento de los datos personales sensibles se otorga por escrito y con firma autógrafa mediante el contrato del Anexo~\ref{anx:contrato}.
+
+\subsection{Identidad y domicilio de los responsables}
+
+Son responsables del tratamiento de los datos personales Pardo Córdova Alonso y Sánchez Flores María Fernanda, estudiantes de la Escuela Superior de Cómputo del Instituto Politécnico Nacional, en su carácter de integrantes del Trabajo Terminal No.~2027-A083 «Prototipo de sistema de detección de caídas en adultos mayores mediante visión artificial», bajo la dirección del Dr.~Correa Coyac David y del Dr.~Vázquez Gómez Juan Irving (en adelante, «el equipo»). Para oír y recibir notificaciones relacionadas con este aviso se señala el domicilio \domicilioAviso, y el correo electrónico \correoAviso.
+
+\subsection{Datos personales que se tratan}
+
+La Tabla~\ref{tab:anx-datos} describe los datos personales que trata el prototipo, de quién son, si se consideran sensibles y dónde se tratan. Se consideran datos personales sensibles los que revelan un posible evento de salud de la persona adulta mayor, como una caída.
+
+\begin{table}[htbp]
+\centering
+\caption{Datos personales tratados por el prototipo ElderGuard.}
+\label{tab:anx-datos}
+\small
+\begin{tabular}{|p{0.27\linewidth}|p{0.16\linewidth}|p{0.10\linewidth}|p{0.33\linewidth}|}
+\hline
+\textbf{Dato} & \textbf{Titular} & \textbf{Sensible} & \textbf{Dónde se trata y por cuánto tiempo} \\ \hline
+Nombre, firma y domicilio de instalación & Persona adulta mayor & No & Contrato en papel, en poder del equipo mientras dure el proyecto. \\ \hline
+Nombre, firma y documento que acredita la representación & Representante legal (si aplica) & No & Contrato en papel, mismo plazo. \\ \hline
+Nombre, firma y teléfono de contacto & Tutores (hasta dos) & No & Contrato en papel; el teléfono solo se usa para coordinar la instalación, el retiro y las solicitudes de revocación. \\ \hline
+Imagen de la persona en la habitación vigilada & Persona adulta mayor y quien entre al encuadre & Sí & Solo en la memoria RAM de la placa Edge, durante el procesamiento de cada cuadro; se sobrescribe de inmediato. No se almacena ni se transmite. \\ \hline
+Eventos de caída y de cierre de incidente (identificadores, hora, confianza, postura e inactividad) & Persona adulta mayor & Sí & Placa Edge, broker MQTT en la nube y teléfonos de los tutores; en la bitácora del teléfono hasta que el tutor la borre o desvincule el teléfono. \\ \hline
+Estado y latidos del dispositivo & Persona adulta mayor & No & Placa Edge, broker en la nube y teléfonos de los tutores. \\ \hline
+Ventana de puntos clave y posturas de cada incidente (coordenadas y confianza, sin imágenes) & Persona adulta mayor & Sí & Solo si la persona no lo rechaza; en la placa Edge, con permisos restringidos, hasta su exportación o 30 días. \\ \hline
+Bitácora exportada por el tutor (incidente, hora, resolución y reemisiones) & Persona adulta mayor & Sí & Solo con el consentimiento del tutor en cada exportación; cifrada, con acceso exclusivo del equipo, hasta la conclusión del proyecto. \\ \hline
+Direcciones IP, identificadores de cliente y horarios de conexión & Persona adulta mayor y tutores & No & Registros del proveedor del broker en la nube, conforme a sus propias políticas. \\ \hline
+\end{tabular}
+\end{table}
+
+\textbf{Datos que no se recaban.} El prototipo no graba ni almacena video ni fotografías, no envía imágenes ni el esqueleto estimado al teléfono del tutor ni a la nube, no identifica quién aparece en la imagen y no solicita correo electrónico, contraseña ni cuenta de usuario. El nombre de la persona adulta mayor no viaja en ningún mensaje: en la aplicación solo existe un apodo que el tutor guarda en su propio teléfono, y el dispositivo se identifica con un código pseudónimo (por ejemplo, EG-014). Las imágenes de otras personas que entren al encuadre, como visitas o cuidadores, reciben el mismo tratamiento: se procesan en memoria y se descartan.
+
+\subsection{Finalidades del tratamiento}
+
+\textbf{Finalidades necesarias}, que dan origen a la relación con el titular y sin las cuales el prototipo no puede operar:
+\begin{enumerate}
+  \item Detectar en la placa Edge una posible caída de la persona adulta mayor a partir de la secuencia de posturas de su esqueleto.
+  \item Notificar a los tutores vinculados mediante una alerta en la aplicación móvil, reemitirla mientras la persona permanezca en el suelo sin respuesta y registrar si el tutor la confirmó o la descartó.
+  \item Informar a los tutores si el dispositivo está conectado o desconectado.
+  \item Instalar, mantener, desvincular y retirar el prototipo, y atender las solicitudes de revocación y de derechos ARCO.
+\end{enumerate}
+
+\textbf{Finalidades voluntarias}, que no son necesarias para la operación y que la persona adulta mayor o el tutor pueden rechazar sin que ello impida usar el prototipo:
+\begin{enumerate}\setcounter{enumi}{4}
+  \item Registrar en la placa la ventana de puntos clave de cada incidente para analizar las falsas alarmas y ajustar los parámetros de la regla temporal (fase~6 de CRISP-ML(Q)).
+  \item Analizar la bitácora que el tutor decida exportar, con el mismo fin.
+  \item Reportar en el documento del Trabajo Terminal resultados agregados y anónimos (por ejemplo, número de alertas confirmadas y descartadas), sin nombre, domicilio ni dato que permita identificar a la persona.
+\end{enumerate}
+La negativa a las finalidades 5 y 6 se manifiesta en el contrato del Anexo~\ref{anx:contrato} o en cualquier momento por correo electrónico; la negativa a la finalidad 6 consiste, además, en no exportar la bitácora. Los datos no se utilizan con fines comerciales, publicitarios ni de perfilamiento, y no se venden ni se ceden.
+
+\subsection{Encargados y transferencias}
+
+Para entregar las alertas se utiliza el servicio HiveMQ Cloud en su plan gratuito, que actúa como encargado del tratamiento: recibe por una conexión cifrada (TLS) los mensajes de alerta, cierre, estado y latido, y registra direcciones IP, identificadores de cliente y horarios de conexión. El proveedor termina la conexión cifrada y puede observar el contenido de esos mensajes, pero nunca recibe imágenes, puntos clave ni el nombre de la persona. Sus servidores pueden ubicarse fuera del territorio nacional. Los mensajes llegan únicamente a los teléfonos de los tutores vinculados (hasta dos). No se realizan otras transferencias de datos personales, salvo las que exija una autoridad competente conforme a la ley.
+
+\subsection{Conservación y medidas de seguridad}
+
+Los cuadros de video se procesan en memoria y se descartan de inmediato; la placa Edge no escribe imágenes ni video en su almacenamiento, tiene desactivados el área de intercambio y los volcados de memoria, y se ubica en un gabinete cerrado. Toda comunicación con el broker se cifra con TLS. Las ventanas de puntos clave se eliminan al exportarse o a los 30 días. Al concluir el Trabajo Terminal, o antes si se revoca el consentimiento, el equipo elimina de forma segura la información exportada, da de baja las credenciales del broker asociadas a la vivienda y retira el equipo; el contrato original firmado se devuelve a la persona adulta mayor o se destruye, según ella elija.
+
+\subsection{Derechos ARCO, revocación del consentimiento y limitación del uso}
+
+La persona adulta mayor, o su representante legal, puede acceder a sus datos, rectificarlos, cancelarlos u oponerse a su tratamiento (derechos ARCO), así como revocar su consentimiento o limitar el uso de sus datos, mediante una solicitud por escrito entregada al equipo o enviada a \correoAviso, que indique su nombre, el derecho que ejerce y, si actúa un representante, el documento que lo acredita. El equipo responderá en un plazo máximo de 20 días hábiles y, si la solicitud procede, la hará efectiva en los 15 días hábiles siguientes.
+
+Además, la persona puede revocar su consentimiento por sí misma y sin intermediarios manteniendo presionado durante 10 segundos el botón del gabinete: la placa detiene la detección, invalida la credencial entregada a los teléfonos, elimina su bitácora local y las ventanas de puntos clave, y queda inactiva hasta una nueva vinculación con un nuevo consentimiento. Como la credencial se administra en el servicio en la nube, el equipo la dará de baja en cuanto reciba el aviso, a más tardar el día hábil siguiente. El tutor puede, desde la aplicación, desvincular su teléfono y borrar el historial local.
+
+\subsection{Decisiones automatizadas}
+
+La detección de caídas es un proceso automatizado basado en inteligencia artificial: un modelo estima el esqueleto y otro clasifica la postura en cada cuadro, y una regla temporal decide si se emite una alerta. Esa alerta no produce por sí misma ninguna consecuencia para la persona: el sistema no llama a servicios de emergencia y la decisión de pedir ayuda corresponde siempre al tutor, después de verificar la situación. El prototipo puede producir falsas alarmas y no detectar algunas caídas, y no es un dispositivo médico.
+
+\subsection{Cambios al aviso de privacidad}
+
+Cualquier cambio a este aviso se comunicará por escrito a la persona adulta mayor y se mostrará en la aplicación móvil antes de aplicarse. Si el cambio implica nuevas finalidades o nuevos datos sensibles, se recabará otra vez su consentimiento por escrito.
+
+\subsection{Autoridad}
+
+Si la persona considera que su derecho a la protección de datos personales ha sido vulnerado, puede acudir ante la Secretaría Anticorrupción y Buen Gobierno, autoridad competente en la materia conforme a la ley vigente~\cite{LFPDPPP}.
+
+% =====================================================================
+\clearpage
+\section{Contrato de consentimiento informado para la instalación del prototipo y el tratamiento de datos personales sensibles}
+\label{anx:contrato}
+% =====================================================================
+
+\begin{center}
+\textbf{CONTRATO DE CONSENTIMIENTO INFORMADO}\\
+Prototipo ElderGuard --- Trabajo Terminal No.~2027-A083\\
+Escuela Superior de Cómputo, Instituto Politécnico Nacional
+\end{center}
+
+\noindent Contrato que celebran, por una parte, \textbf{la persona adulta mayor} cuyo nombre se indica abajo (en adelante, «el titular»), por sí o por medio de su representante legal; por otra, \textbf{los tutores} que se indican; y por otra, Pardo Córdova Alonso y Sánchez Flores María Fernanda (en adelante, «el equipo»), al tenor de las siguientes declaraciones y cláusulas.
+
+\subsection*{Datos de las partes}
+
+\noindent
+\begin{tabular}{@{}p{0.37\linewidth}l@{}}
+Nombre del titular: & \campo[0.58\linewidth] \\[8pt]
+Domicilio de instalación: & \campo[0.58\linewidth] \\[8pt]
+ & \campo[0.58\linewidth] \\[8pt]
+Habitación donde se instala la cámara: & \campo[0.58\linewidth] \\[8pt]
+Representante legal (si aplica): & \campo[0.58\linewidth] \\[8pt]
+Documento que acredita la representación: & \campo[0.58\linewidth] \\[8pt]
+Tutor 1 (nombre y teléfono): & \campo[0.58\linewidth] \\[8pt]
+Tutor 2 (nombre y teléfono, opcional): & \campo[0.58\linewidth] \\[8pt]
+Identificador del dispositivo: & \campo[3cm] \\
+\end{tabular}
+
+\subsection*{Declaraciones}
+
+\textbf{I. Declara el equipo} que es integrante del Trabajo Terminal No.~2027-A083 de la Escuela Superior de Cómputo del IPN; que el prototipo ElderGuard es un desarrollo académico y no un producto comercial ni un dispositivo médico certificado; y que entregó al titular el aviso de privacidad integral (Anexo~\ref{anx:aviso}) antes de la firma de este contrato.
+
+\textbf{II. Declara el titular}, o su representante legal, que recibió y leyó el aviso de privacidad, o que el equipo se lo leyó en voz alta; que se le explicaron en lenguaje claro el funcionamiento, los alcances y las limitaciones del prototipo; que pudo hacer preguntas y que estas se le respondieron; y que firma por su libre voluntad, sin presión de ninguna de las otras partes.
+
+\textbf{III. Declaran los tutores} que conocen el aviso de privacidad; que aceptan recibir las alertas en su teléfono; y que entienden que deberán verificar por su cuenta la situación del titular antes de pedir ayuda, porque la alerta no incluye imágenes.
+
+\subsection*{Cláusulas}
+
+\textbf{Primera. Objeto.} El titular autoriza la instalación del prototipo ElderGuard en la habitación indicada y el tratamiento de sus datos personales, incluidos los sensibles, para las finalidades necesarias descritas en el aviso de privacidad, y, en su caso, para las finalidades voluntarias que acepte en la cláusula Décima.
+
+\textbf{Segunda. Funcionamiento.} Una cámara conectada a una placa Edge analiza la imagen de la habitación para estimar el esqueleto del titular y reconocer una caída. Cada imagen se procesa en la placa y se descarta de inmediato: no se graba, no se almacena y no se envía a ningún teléfono ni a internet. Ante una posible caída, la placa envía por internet, de forma cifrada, un aviso sin imágenes a los teléfonos de hasta dos tutores, a través de un servicio de mensajería en la nube que conoce la hora del aviso y los datos de conexión, pero no recibe imágenes ni el nombre del titular.
+
+\textbf{Tercera. Alcances y limitaciones.} El titular y los tutores reconocen que el prototipo: (a) puede no detectar algunas caídas, en particular las que ocurren fuera del encuadre, en oscuridad, detrás de muebles, desde la cama estando acostado o las que terminan con la persona sentada en el suelo; (b) puede generar falsas alarmas, por ejemplo al acostarse rápidamente desde estar de pie; (c) no llama por sí mismo a servicios de emergencia; (d) deja de funcionar sin energía eléctrica o sin internet en la vivienda, o si el servicio en la nube no está disponible; y (e) no sustituye la atención médica, la supervisión de un cuidador ni un servicio de emergencias.
+
+\textbf{Cuarta. Préstamo del equipo.} El equipo presta sin costo la placa Edge, la cámara, la fuente de alimentación y el gabinete, que siguen siendo de su propiedad y se retiran al terminar el contrato. El titular proporciona la conexión eléctrica y a internet de la vivienda. Ninguna de las partes cobra ni paga cantidad alguna por este contrato.
+
+\textbf{Quinta. Instalación.} La cámara se instala fija, en la habitación que elija el titular, y no se instala en el baño. El titular puede pedir en cualquier momento que se reubique o se retire. El titular se compromete a no abrir el gabinete y a informar a las personas que frecuenten la habitación que en ella opera una cámara que no graba.
+
+\textbf{Sexta. Obligaciones del equipo.} El equipo se obliga a: (a) tratar los datos conforme al aviso de privacidad y guardar confidencialidad sobre ellos; (b) no activar ninguna función de grabación ni de transmisión de imágenes; (c) atender las solicitudes de derechos ARCO y de revocación en los plazos del aviso; y (d) eliminar la información y retirar el equipo al terminar el contrato.
+
+\textbf{Séptima. Obligaciones de los tutores.} Los tutores se obligan a usar la aplicación solo para el cuidado del titular, a verificar su situación al recibir una alerta, a no compartir con terceros la información de las alertas y a desvincular su teléfono si dejan de participar en su cuidado.
+
+\textbf{Octava. Vigencia.} Este contrato surte efectos desde su firma y hasta la conclusión del Trabajo Terminal No.~2027-A083, salvo que se termine antes conforme a la cláusula Novena.
+
+\textbf{Novena. Revocación y terminación.} El titular puede revocar su consentimiento en cualquier momento, sin expresar causa y sin consecuencia alguna en su contra: por escrito, de palabra ante el equipo o un tutor, o manteniendo presionado 10 segundos el botón del gabinete, lo que detiene la detección de inmediato. El equipo dará de baja la credencial del servicio en la nube a más tardar el día hábil siguiente al aviso y retirará el equipo en la fecha que se acuerde. Un tutor puede dejar de participar desvinculando su teléfono, sin que ello termine el contrato respecto del titular.
+
+\textbf{Décima. Consentimientos específicos.} El titular marca su decisión en cada punto:
+
+\medskip
+\noindent
+\begin{tabular}{@{}p{0.80\linewidth}cc@{}}
+ & \textbf{Sí} & \textbf{No} \\[4pt]
+Consiento expresamente el tratamiento de mis datos personales sensibles para detectar caídas y avisar a mis tutores (necesario para instalar el prototipo). & \casilla & \casilla \\[10pt]
+Acepto que la placa guarde, sin imágenes y por un máximo de 30 días, la ventana de puntos clave de cada incidente para analizar falsas alarmas (voluntario). & \casilla & \casilla \\[10pt]
+Acepto que el equipo analice la bitácora que mis tutores decidan exportar (voluntario). & \casilla & \casilla \\[10pt]
+Acepto que se reporten en el documento del Trabajo Terminal resultados agregados y anónimos de mi uso del prototipo (voluntario). & \casilla & \casilla \\
+\end{tabular}
+\medskip
+
+\noindent Si el titular marca «No» en el primer punto, el prototipo no se instala.
+
+\textbf{Undécima. Representación.} Cuando el titular no pueda otorgar su consentimiento por sí mismo, firma su representante legal, quien declara contar con facultades para ello y actuar en su beneficio. El titular será informado del contenido de este contrato en la medida de sus posibilidades.
+
+\textbf{Duodécima. Controversias.} Las partes resolverán de buena fe cualquier duda sobre este contrato, con la intervención, de ser necesaria, de los directores del Trabajo Terminal. Lo no previsto se rige por la legislación mexicana aplicable.
+
+\medskip
+\noindent Leído el presente contrato y enteradas las partes de su contenido y alcance, lo firman por duplicado en \campo[3.5cm], el día \campo[1cm] de \campo[2.5cm] de \campo[1.2cm]. El titular conserva un ejemplar y el equipo, el otro.
+
+\subsection*{Firmas}
+
+\noindent
+\bloqueFirma{Titular (persona adulta mayor)}{Nombre y firma autógrafa}\hfill
+\bloqueFirma{Representante legal (si aplica)}{Nombre y firma}
+
+\noindent
+\bloqueFirma{Tutor 1}{Nombre y firma}\hfill
+\bloqueFirma{Tutor 2 (opcional)}{Nombre y firma}
+
+\noindent
+\bloqueFirma{Pardo Córdova Alonso}{Por el equipo}\hfill
+\bloqueFirma{Sánchez Flores María Fernanda}{Por el equipo}
+
+\noindent
+\bloqueFirma{Testigo}{Nombre y firma}\hfill
+\bloqueFirma{Testigo}{Nombre y firma}
+
+\vspace{1cm}
+\noindent\fbox{\begin{minipage}{0.96\textwidth}
+\small\textbf{Constancia de entrega.} El titular recibe en este acto un ejemplar firmado de este contrato y del aviso de privacidad integral.\\[1.4cm]
+\centering\rule{6cm}{0.4pt}\\ Firma del titular o de su representante legal
+\end{minipage}}
+
 \end{document}
