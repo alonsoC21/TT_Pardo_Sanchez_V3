@@ -25,6 +25,7 @@ Reglas para editar esta lista:
 - Biber
 - BGR
 - CNN
+- Cloud
 - COCO
 - Cortex
 - CRISP-DM
@@ -69,6 +70,7 @@ Reglas para editar esta lista:
 - RAM
 - Raspberry Pi
 - RGB
+- Serverless
 - Sitting
 - Super
 - SVM
