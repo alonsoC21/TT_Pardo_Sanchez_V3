@@ -26,8 +26,10 @@ trabajo previo de los autores.
   cada una. El proyecto se gestiona como un solo sistema que integra el modelo
   de aprendizaje automático y la infraestructura IoT.
 - **Arquitectura:** cámara RGB → placa Edge → estimación de pose con
-  YOLO26-pose → clasificador de posturas → regla temporal → MQTT (Mosquitto,
-  QoS 1) → aplicación móvil Android → tutor.
+  YOLO26-pose → clasificador de posturas → regla temporal → MQTT
+  (QoS 1, sobre TLS, puerto 8883) → *broker* en la nube (HiveMQ Cloud, plan
+  gratuito) → aplicación móvil Android → tutor. No hay VPN ni *broker* local:
+  la placa y el teléfono son clientes que se conectan hacia el *broker*.
 - **Plataforma de borde:** la **placa Edge** es el nombre de la capa de cómputo
   local en la arquitectura (capas, diagramas y flujos) y se conserva como
   término genérico. El hardware que la implementa es la **Raspberry Pi 5 de
@@ -295,8 +297,10 @@ confiar en esta lista; los hallazgos ya corregidos se retiran de aquí.
    el capítulo «Anexos» existe pero está vacío (`ap:material`).
 8. `main.tex`, Figura `fig:arquitectura_iot`: la capa de cómputo Edge menciona
    Docker y no hay sección que describa el despliegue en contenedores.
-9. `main.tex`, `sec:topologia-red` y `sec:arquitectura-iot`: no se especifica si
-   Mosquitto usa TLS además del túnel WireGuard. Conviene declararlo.
+9. `main.tex`, sección «Internet de las cosas y protocolo MQTT» del marco
+   teórico: cita Eclipse Mosquitto como ejemplo de *broker*, mientras que el
+   diseño (`sec:topologia-red`) adopta HiveMQ Cloud. No es un error, pero
+   conviene mencionar también el servicio en la nube elegido.
 10. `Bibliografía.tex` duplica la base bibliográfica y no está incluida en la
     compilación. Trátala como material heredado.
 11. Figuras raster pendientes de regenerar tras el rediseño de red y
@@ -311,9 +315,11 @@ confiar en esta lista; los hallazgos ya corregidos se retiran de aquí.
 
 Corregidos y retirados de esta lista: el carácter suelto `a` de la línea 15,
 «craneocefálicos» (ahora «craneoencefálicos»), la marca `[Pendiente: ...]` de
-la sección de diseño del extractor de pose, la coordinación abierta de las
-claves de la VPN y el mecanismo de exhibición del QR en una placa sin monitor
-(ahora etiqueta física con canal de aprovisionamiento en `wlan0` o BLE).
+la sección de diseño del extractor de pose, la VPN WireGuard (sustituida por un
+*broker* MQTT en la nube con TLS, declarado en `sec:topologia-red` y
+`sec:sesiones-nube`) y el mecanismo de exhibición del QR en una placa sin
+monitor (ahora etiqueta física con vinculación por un punto de acceso Wi-Fi
+temporal en `wlan0`, activado con un botón GPIO; no se usa BLE).
 
 ## 9. Criterios de aceptación de un cambio
 
